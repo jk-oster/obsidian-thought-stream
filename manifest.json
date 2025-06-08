@@ -1,7 +1,7 @@
 {
   "id": "obsidian-thought-stream-ghost",
   "name": "Thought Stream",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "minAppVersion": "0.15.0",
   "description": "Speech-to-text and content creation in Obsidian using OpenAI",
   "author": "Jakob Osterberger",
