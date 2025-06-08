@@ -1,14 +1,15 @@
-import Whisper from "main";
+import ThoughtStream from "main";
 import { App, PluginSettingTab, Setting, TFolder } from "obsidian";
 import { SettingsManager } from "./SettingsManager";
+import {Notifiable} from "./Observable";
 
-export class WhisperSettingsTab extends PluginSettingTab {
-	private plugin: Whisper;
+export class SettingsTab extends PluginSettingTab {
+	private plugin: ThoughtStream;
 	private settingsManager: SettingsManager;
 	private createNewFileInput: Setting;
 	private saveAudioFileInput: Setting;
 
-	constructor(app: App, plugin: Whisper) {
+	constructor(app: App, plugin: ThoughtStream) {
 		super(app, plugin);
 		this.plugin = plugin;
 		this.settingsManager = plugin.settingsManager;
@@ -18,7 +19,8 @@ export class WhisperSettingsTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
-		this.createHeader();
+		this.createHeader('Thought Stream Settings', 'h1');
+		this.createHeader('Ghost Listener');
 		this.createApiKeySetting();
 		this.createApiUrlSetting();
 		this.createModelSetting();
@@ -28,6 +30,13 @@ export class WhisperSettingsTab extends PluginSettingTab {
 		this.createSaveAudioFilePathSetting();
 		this.createNewFileToggleSetting();
 		this.createNewFilePathSetting();
+		this.insertRecordingAtCursorToggleSetting();
+		this.copyRecordingToClipboardToggleSetting();
+		this.createHeader('Ghost Writer');
+		this.saveDraftsFilePathSetting();
+		this.createHeader('Ghost Reader');
+		this.autoReadActiveFileToggleSetting();
+
 		this.createDebugModeToggleSetting();
 	}
 
@@ -45,8 +54,8 @@ export class WhisperSettingsTab extends PluginSettingTab {
 		return Array.from(folderSet);
 	}
 
-	private createHeader(): void {
-		this.containerEl.createEl("h2", { text: "Settings for Whisper." });
+	private createHeader(text: string, tag: keyof HTMLElementTagNameMap = 'h2'): void {
+		this.containerEl.createEl(tag, { text });
 	}
 
 	private createTextSetting(
@@ -72,9 +81,9 @@ export class WhisperSettingsTab extends PluginSettingTab {
 			"API Key",
 			"Enter your OpenAI API key",
 			"sk-...xxxx",
-			this.plugin.settings.apiKey,
+			this.plugin.settings.transcriptionApiKey,
 			async (value) => {
-				this.plugin.settings.apiKey = value;
+				this.plugin.settings.transcriptionApiKey = value;
 				await this.settingsManager.saveSettings(this.plugin.settings);
 			}
 		);
@@ -85,9 +94,9 @@ export class WhisperSettingsTab extends PluginSettingTab {
 			"API URL",
 			"Specify the endpoint that will be used to make requests to",
 			"https://api.your-custom-url.com",
-			this.plugin.settings.apiUrl,
+			this.plugin.settings.transcriptionApiUrl,
 			async (value) => {
-				this.plugin.settings.apiUrl = value;
+				this.plugin.settings.transcriptionApiUrl = value;
 				await this.settingsManager.saveSettings(this.plugin.settings);
 			}
 		);
@@ -98,9 +107,9 @@ export class WhisperSettingsTab extends PluginSettingTab {
 			"Model",
 			"Specify the machine learning model to use for generating text",
 			"whisper-1",
-			this.plugin.settings.model,
+			this.plugin.settings.transcriptionModel,
 			async (value) => {
-				this.plugin.settings.model = value;
+				this.plugin.settings.transcriptionModel = value;
 				await this.settingsManager.saveSettings(this.plugin.settings);
 			}
 		);
@@ -111,9 +120,9 @@ export class WhisperSettingsTab extends PluginSettingTab {
 			"Prompt",
 			"Optional: Add words with their correct spellings to help with transcription. Make sure it matches the chosen language.",
 			"Example: ZyntriQix, Digique Plus, CynapseFive",
-			this.plugin.settings.prompt,
+			this.plugin.settings.transcriptionPrompt,
 			async (value) => {
-				this.plugin.settings.prompt = value;
+				this.plugin.settings.transcriptionPrompt = value;
 				await this.settingsManager.saveSettings(this.plugin.settings);
 			}
 		);
@@ -178,7 +187,7 @@ export class WhisperSettingsTab extends PluginSettingTab {
 		new Setting(this.containerEl)
 			.setName("Save transcription")
 			.setDesc(
-				"Turn on to create a new file for each recording, or leave off to add transcriptions at your cursor"
+				"Turn on to create a new file for each recording, or leave off to add transcriptions at your cursor and "
 			)
 			.addToggle((toggle) => {
 				toggle
@@ -198,6 +207,42 @@ export class WhisperSettingsTab extends PluginSettingTab {
 			});
 	}
 
+	private insertRecordingAtCursorToggleSetting(): void {
+		new Setting(this.containerEl)
+			.setName("Insert recording at cursor")
+			.setDesc(
+				"Turn on to insert the transcription at the current cursor position in the active note."
+			)
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.insertRecordingAtCursor)
+					.onChange(async (value) => {
+						this.plugin.settings.insertRecordingAtCursor = value;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+			});
+	}
+
+	private copyRecordingToClipboardToggleSetting(): void {
+		new Setting(this.containerEl)
+			.setName("Copy recording to clipboard")
+			.setDesc(
+				"Turn on to copy the transcription to the clipboard after saving it."
+			)
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.saveRecordingToClipboard)
+					.onChange(async (value) => {
+						this.plugin.settings.saveRecordingToClipboard = value;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+			});
+	}
+
 	private createNewFilePathSetting(): void {
 		this.createNewFileInput = new Setting(this.containerEl)
 			.setName("Transcriptions folder")
@@ -212,6 +257,43 @@ export class WhisperSettingsTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.createNewFileAfterRecordingPath =
 							value;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+			});
+	}
+
+
+	private saveDraftsFilePathSetting(): void {
+		new Setting(this.containerEl)
+			.setName("Drafts folder for Content Generation")
+			.setDesc(
+				"Specify the path in the vault where to save the drafts files"
+			)
+			.addText((text) => {
+				text.setPlaceholder("Example: folder/drafts")
+					.setValue(this.plugin.settings.saveDraftsFilePath)
+					.onChange(async (value) => {
+						this.plugin.settings.saveDraftsFilePath = value;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+			});
+	}
+
+	private autoReadActiveFileToggleSetting(): void {
+		new Setting(this.containerEl)
+			.setName("Auto-read active file")
+			.setDesc(
+				"Turn on to automatically read the content of the active file and create questions for it."
+			)
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.autoReadActiveFile)
+					.onChange(async (value) => {
+						this.plugin.settings.autoReadActiveFile = value;
 						await this.settingsManager.saveSettings(
 							this.plugin.settings
 						);
