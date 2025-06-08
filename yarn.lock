@@ -3236,6 +3236,11 @@ open@9.1.0:
     is-inside-container "^1.0.0"
     is-wsl "^2.2.0"
 
+openai@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-5.1.1.tgz#b09f43520e1b6321d487e39c3295cbbe11827def"
+  integrity sha512-lgIdLqvpLpz8xPUKcEIV6ml+by74mbSBz8zv/AHHebtLn/WdpH4kdXT3/Q5uUKDHg3vHV/z9+G9wZINRX6rkDg==
+
 optionator@^0.8.1:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.8.3.tgz#84fa1d036fe9d3c7e21d99884b601167ec8fb495"
@@ -4622,3 +4627,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zod@^3.25.55:
+  version "3.25.55"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.55.tgz#b1ffd48a34f558d1a912d1ed6bf84a6ca692fbe1"
+  integrity sha512-219huNnkSLQnLsQ3uaRjXsxMrVm5C9W3OOpEVt2k5tvMKuA8nBSu38e0B//a+he9Iq2dvmk2VyYVlHqiHa4YBA==

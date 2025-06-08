@@ -9,7 +9,7 @@ Obsidian Whisper is a plugin that effortlessly turns your speech into written no
 
 ## 🎯 How to Use
 
-### Access Recording Controls
+### Access Recording RecorderModal
 
 Click on the ribbon button to open the recording controls interface.
 
