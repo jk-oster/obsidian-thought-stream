@@ -1,4 +1,5 @@
 import { Notice } from "obsidian";
+import {Observable} from "./Observable";
 
 export interface AudioRecorder {
 	startRecording(): Promise<void>;
@@ -18,13 +19,16 @@ function getSupportedMimeType(): string | undefined {
 	return undefined;
 }
 
+export type RecorderState = "inactive" | "recording" | "paused" | undefined;
+
 export class NativeAudioRecorder implements AudioRecorder {
 	private chunks: BlobPart[] = [];
 	private recorder: MediaRecorder | null = null;
 	private mimeType: string | undefined;
+	public readonly $state: Observable<RecorderState> = new Observable<RecorderState>(undefined);
 
-	getRecordingState(): "inactive" | "recording" | "paused" | undefined {
-		return this.recorder?.state;
+	getRecordingState(): RecorderState {
+		return this.recorder?.state ?? this.$state.value;
 	}
 
 	getMimeType(): string | undefined {
@@ -60,6 +64,7 @@ export class NativeAudioRecorder implements AudioRecorder {
 		}
 
 		this.recorder.start(100);
+		this.$state.set('recording');
 	}
 
 	async pauseRecording(): Promise<void> {
@@ -69,8 +74,10 @@ export class NativeAudioRecorder implements AudioRecorder {
 
 		if (this.recorder.state === "recording") {
 			this.recorder.pause();
+			this.$state.set('paused');
 		} else if (this.recorder.state === "paused") {
 			this.recorder.resume();
+			this.$state.set('recording');
 		}
 	}
 
@@ -81,6 +88,7 @@ export class NativeAudioRecorder implements AudioRecorder {
 				this.chunks.length = 0;
 
 				console.log("Stop recording (no active recorder):", blob);
+				this.$state.set('inactive');
 
 				resolve(blob);
 			} else {
@@ -108,6 +116,7 @@ export class NativeAudioRecorder implements AudioRecorder {
 				);
 
 				this.recorder.stop();
+				this.$state.set('inactive');
 			}
 		});
 	}
