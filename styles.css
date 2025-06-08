@@ -9,17 +9,14 @@
 	display: flex;
 	justify-content: center;
 	gap: 10px;
+	padding: 5px;
 }
 .recording-controls .button-component {
 	padding: 5px 10px;
-}
-
-.recording-controls .button-component {
-	background-color: var(--text-accent);
-	color: var(--text-light);
 	cursor: pointer;
 }
 
+.question-controls .button-component:hover,
 .recording-controls .button-component:hover {
 	background-color: var(--text-accent-hover);
 }
@@ -29,4 +26,78 @@
 	background-color: var(--text-accent-muted);
 	color: var(--text-muted);
 	cursor: not-allowed;
+}
+
+.timer {
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.questions-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	list-style-type: none;
+	padding-inline-start: 0;
+	/* Transition for list items */
+	transition: all 0.5s ease;
+}
+
+.question-controls {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	gap: 10px;
+}
+
+.question-item {
+	border: 2px dotted;
+	border-radius: 10px;
+	padding: 10px;
+	opacity: 0.35;
+	/* fade in effect */
+	transition: opacity 0.5s ease, transform 0.5s ease;
+	/* transform for hover effect */
+}
+
+.question-text {
+	font-weight: bold;
+	padding-bottom: 5px;
+}
+
+.question-item:focus-within,
+.question-item:hover {
+	opacity: 1;
+	border: 2px solid;
+}
+
+.thought-stream-modal .setting-item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+
+	.setting-item-control {
+		width: 100%;
+		justify-content: flex-start;
+
+		textarea, input, select {
+			width: 100%;
+			max-width: 100%;
+		}
+
+		textarea {
+			height: 4rem;
+			resize: vertical;
+		}
+	}
+}
+
+.answer-modal.thought-stream-modal .setting-item {
+	.setting-item-control {
+		textarea {
+			height: 10rem;
+		}
+	}
 }

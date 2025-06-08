@@ -1,48 +1,56 @@
 import axios from "axios";
-import Whisper from "main";
+import ThoughtStream from "main";
 import { Notice, MarkdownView } from "obsidian";
 import { getBaseFileName } from "./utils";
+import {Observable} from "./Observable";
+
+export type AudioHandlerState = 'processing' | 'idle';
+export type TranscriptionResult = {
+	text: string;
+	fileName: string;
+};
 
 export class AudioHandler {
-	private plugin: Whisper;
+	private plugin: ThoughtStream;
 
-	constructor(plugin: Whisper) {
+	public readonly $state: Observable<AudioHandlerState> = new Observable<AudioHandlerState>('idle');
+	public readonly $transcription: Observable<TranscriptionResult> = new Observable<TranscriptionResult>({
+		text: '',
+		fileName: ''
+	});
+	public readonly $error: Observable<string|null> = new Observable<string|null>('');
+
+	constructor(plugin: ThoughtStream) {
 		this.plugin = plugin;
 	}
 
-	async sendAudioData(blob: Blob, fileName: string): Promise<void> {
+	async fetchTranscription(blob: Blob, fileName: string, notify: boolean = true): Promise<TranscriptionResult> {
 		// Get the base file name without extension
-		const baseFileName = getBaseFileName(fileName);
-
 		const audioFilePath = `${
 			this.plugin.settings.saveAudioFilePath
 				? `${this.plugin.settings.saveAudioFilePath}/`
 				: ""
 		}${fileName}`;
 
-		const noteFilePath = `${
-			this.plugin.settings.createNewFileAfterRecordingPath
-				? `${this.plugin.settings.createNewFileAfterRecordingPath}/`
-				: ""
-		}${baseFileName}.md`;
-
 		if (this.plugin.settings.debugMode) {
 			new Notice(`Sending audio data size: ${blob.size / 1000} KB`);
 		}
 
-		if (!this.plugin.settings.apiKey) {
+		if (!this.plugin.settings.transcriptionApiKey) {
 			new Notice(
 				"API key is missing. Please add your API key in the settings."
 			);
-			return;
+			return { text: '', fileName: '' };
 		}
+
+		this.$state.set('processing');
 
 		const formData = new FormData();
 		formData.append("file", blob, fileName);
-		formData.append("model", this.plugin.settings.model);
+		formData.append("model", this.plugin.settings.transcriptionModel);
 		formData.append("language", this.plugin.settings.language);
-		if (this.plugin.settings.prompt)
-			formData.append("prompt", this.plugin.settings.prompt);
+		if (this.plugin.settings.transcriptionPrompt)
+			formData.append("prompt", this.plugin.settings.transcriptionPrompt);
 
 		try {
 			// If the saveAudioFile setting is true, save the audio file
@@ -64,55 +72,33 @@ export class AudioHandler {
 				new Notice("Parsing audio data:" + fileName);
 			}
 			const response = await axios.post(
-				this.plugin.settings.apiUrl,
+				this.plugin.settings.transcriptionApiUrl,
 				formData,
 				{
 					headers: {
 						"Content-Type": "multipart/form-data",
-						Authorization: `Bearer ${this.plugin.settings.apiKey}`,
+						Authorization: `Bearer ${this.plugin.settings.transcriptionApiKey}`,
 					},
 				}
 			);
 
-			// Determine if a new file should be created
-			const activeView =
-				this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
-			const shouldCreateNewFile =
-				this.plugin.settings.createNewFileAfterRecording || !activeView;
-
-			if (shouldCreateNewFile) {
-				await this.plugin.app.vault.create(
-					noteFilePath,
-					`![[${audioFilePath}]]\n${response.data.text}`
-				);
-				await this.plugin.app.workspace.openLinkText(
-					noteFilePath,
-					"",
-					true
-				);
-			} else {
-				// Insert the transcription at the cursor position
-				const editor =
-					this.plugin.app.workspace.getActiveViewOfType(
-						MarkdownView
-					)?.editor;
-				if (editor) {
-					const cursorPosition = editor.getCursor();
-					editor.replaceRange(response.data.text, cursorPosition);
-
-					// Move the cursor to the end of the inserted text
-					const newPosition = {
-						line: cursorPosition.line,
-						ch: cursorPosition.ch + response.data.text.length,
-					};
-					editor.setCursor(newPosition);
-				}
-			}
-
-			new Notice("Audio parsed successfully.");
+			// Emit the transcription result
+			this.$transcription.set({
+				text: response.data.text,
+				fileName: fileName,
+			}, notify);
+			console.log("Audio fetched successfully.");
 		} catch (err) {
-			console.error("Error parsing audio:", err);
-			new Notice("Error parsing audio: " + err.message);
+			console.error("Error fetching audio:", err);
+			new Notice("Error fetching audio: " + err.message);
+
+			this.$transcription.set({
+				text: '',
+				fileName: '',
+			}, notify);
 		}
+
+		this.$state.set('idle');
+		return this.$transcription.get();
 	}
 }

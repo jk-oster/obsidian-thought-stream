@@ -1,60 +1,114 @@
-import { Plugin } from "obsidian";
+import {Plugin, WorkspaceLeaf} from "obsidian";
 import { Timer } from "src/Timer";
-import { Controls } from "src/Controls";
+import {RecorderModal} from "src/RecorderModal";
+import {ThoughtStreamView, VIEW_TYPE_THOUGHT_STREAM_CONTROLS} from "src/ThoughtStreamView";
 import { AudioHandler } from "src/AudioHandler";
-import { WhisperSettingsTab } from "src/WhisperSettingsTab";
-import { SettingsManager, WhisperSettings } from "src/SettingsManager";
+import { SettingsTab } from "src/SettingsTab";
+import { SettingsManager, ThoughtStreamSettings } from "src/SettingsManager";
 import { NativeAudioRecorder } from "src/AudioRecorder";
 import { RecordingStatus, StatusBar } from "src/StatusBar";
-export default class Whisper extends Plugin {
-	settings: WhisperSettings;
+import {Notifiable} from "./src/Observable";
+import {TranscriptionHandler} from "./src/TransriptionHandler";
+import {AiClient} from "./src/AiClient";
+import {GhostReader} from "./src/GhostReader";
+import {GhostWriter} from "./src/GhostWriter";
+import {GhostWriterModal} from "./src/GhostWriterModal";
+import {Controller} from "./src/Controller";
+import {CreatePresetModal} from "./src/CreatePresetModal";
+export default class ThoughtStream extends Plugin {
+	settings: ThoughtStreamSettings;
 	settingsManager: SettingsManager;
+	aiClient: AiClient;
+	ghostReader: GhostReader;
+	ghostWriter: GhostWriter;
 	timer: Timer;
 	recorder: NativeAudioRecorder;
 	audioHandler: AudioHandler;
-	controls: Controls | null = null;
+	transcriptionHandler: TranscriptionHandler;
+	recorderModal: RecorderModal | null = null;
 	statusBar: StatusBar;
+	controller: Controller;
+
+	public getRecorderModal(): RecorderModal {
+		if (!this.recorderModal) {
+			this.recorderModal = new RecorderModal(this);
+		}
+		return this.recorderModal;
+	}
 
 	async onload() {
 		this.settingsManager = new SettingsManager(this);
 		this.settings = await this.settingsManager.loadSettings();
+		this.aiClient = new AiClient(this);
+		this.ghostWriter = new GhostWriter(this);
+		this.ghostReader = new GhostReader(this);
+		this.controller = new Controller(this);
 
-		this.addRibbonIcon("activity", "Open recording controls", (evt) => {
-			if (!this.controls) {
-				this.controls = new Controls(this);
-			}
-			this.controls.open();
+		this.addRibbonIcon("mic", "Open recording controls modal", (evt) => {
+			this.getRecorderModal().open();
+			this.controller.startRecording();
 		});
 
-		this.addSettingTab(new WhisperSettingsTab(this.app, this));
+		this.registerView(
+			VIEW_TYPE_THOUGHT_STREAM_CONTROLS,
+			(leaf) => new ThoughtStreamView(leaf, this)
+		);
+		this.addRibbonIcon("ghost", "Open Thought Stream Ghosts View", (evt) => {
+			this.activateControlsView().then(() => console.log('activated'));
+		});
+
+		const fileOpen = this.app.workspace.on('file-open', async (file) => {
+			if (file) {
+				await this.ghostReader.getQuestionsFromFrontmatter();
+				await this.ghostReader.autoGenerateForActiveFile();
+			}
+		})
+		const editorChange = this.app.workspace.on('editor-change', (editor, info) => {
+			if (info.file) {
+				console.log('editor change', info.file);
+			}
+		})
+		this.registerEvent(fileOpen)
+		this.registerEvent(editorChange)
+
+		this.addSettingTab(new SettingsTab(this.app, this));
 
 		this.timer = new Timer();
-		this.audioHandler = new AudioHandler(this);
 		this.recorder = new NativeAudioRecorder();
-
+		this.audioHandler = new AudioHandler(this);
+		this.transcriptionHandler = new TranscriptionHandler(this);
 		this.statusBar = new StatusBar(this);
 
 		this.addCommands();
 	}
 
 	onunload() {
-		if (this.controls) {
-			this.controls.close();
-		}
+		// Cleanup any subscriptions
+		Object.keys(this).forEach((key) => {
+			const value = (this as any)[key];
+			if (value && value instanceof Notifiable) {
+				value.clear();
+			}
+		});
 
+		if (this.recorderModal) {
+			this.recorderModal.close();
+		}
 		this.statusBar.remove();
 	}
 
 	addCommands() {
 		this.addCommand({
 			id: "start-stop-recording",
-			name: "Start/stop recording",
+			name: "GhostListener - Start/stop recording",
 			callback: async () => {
-				if (this.statusBar.status !== RecordingStatus.Recording) {
-					this.statusBar.updateStatus(RecordingStatus.Recording);
+				if (this.statusBar.$state.value !== 'recording') {
+					this.statusBar.updateStatus('recording');
 					await this.recorder.startRecording();
+					this.timer.start();
 				} else {
-					this.statusBar.updateStatus(RecordingStatus.Processing);
+					this.statusBar.updateStatus('processing');
+					this.timer.reset();
 					const audioBlob = await this.recorder.stopRecording();
 					const extension = this.recorder
 						.getMimeType()
@@ -63,8 +117,8 @@ export default class Whisper extends Plugin {
 						.toISOString()
 						.replace(/[:.]/g, "-")}.${extension}`;
 					// Use audioBlob to send or save the recorded audio as needed
-					await this.audioHandler.sendAudioData(audioBlob, fileName);
-					this.statusBar.updateStatus(RecordingStatus.Idle);
+					await this.audioHandler.fetchTranscription(audioBlob, fileName);
+					this.statusBar.updateStatus('idle');
 				}
 			},
 			hotkeys: [
@@ -77,7 +131,7 @@ export default class Whisper extends Plugin {
 
 		this.addCommand({
 			id: "upload-audio-file",
-			name: "Upload audio file",
+			name: "GhostListener - Upload audio file",
 			callback: () => {
 				// Create an input element for file selection
 				const fileInput = document.createElement("input");
@@ -92,7 +146,7 @@ export default class Whisper extends Plugin {
 						const fileName = file.name;
 						const audioBlob = file.slice(0, file.size, file.type);
 						// Use audioBlob to send or save the uploaded audio as needed
-						await this.audioHandler.sendAudioData(
+						await this.audioHandler.fetchTranscription(
 							audioBlob,
 							fileName
 						);
@@ -103,5 +157,43 @@ export default class Whisper extends Plugin {
 				fileInput.click();
 			},
 		});
+
+		this.addCommand({
+			id: "create-content",
+			name: "GhostWriter - Create Content",
+			callback: () => {
+				new GhostWriterModal(this).open();
+			},
+		});
+		this.addCommand({
+			id: "create-content-preset",
+			name: "GhostWriter - Create Content Preset",
+			callback: () => {
+				new CreatePresetModal(this).open();
+			},
+		});
+	}
+
+	async activateControlsView() {
+		const { workspace } = this.app;
+
+		let leaf: WorkspaceLeaf | null = null;
+		const leaves = workspace.getLeavesOfType(VIEW_TYPE_THOUGHT_STREAM_CONTROLS);
+		if (leaves.length > 0) {
+			// A leaf with our view already exists, use that
+			leaf = leaves[0];
+		} else {
+			// Our view could not be found in the workspace, create a new leaf
+			// in the right sidebar for it
+			leaf = workspace.getRightLeaf(false);
+			await leaf?.setViewState({ type: VIEW_TYPE_THOUGHT_STREAM_CONTROLS, active: true });
+		}
+
+		console.log(leaf)
+
+		if (leaf) {
+			// "Reveal" the leaf in case it is in a collapsed sidebar
+			workspace.revealLeaf(leaf);
+		}
 	}
 }
