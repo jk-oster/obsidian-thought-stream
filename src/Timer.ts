@@ -1,53 +1,46 @@
-export class Timer {
-	private elapsedTime: number = 0;
-	private intervalId: number | null = null;
-	private onUpdate: (() => void) | null = null;
+import {Observable} from "./Observable";
 
-	setOnUpdate(callback: () => void): void {
-		this.onUpdate = callback;
+export class Timer {
+	public readonly $elapsedTimeMs: Observable<number> = new Observable<number>(0);
+	private intervalId: number | null = null;
+
+	startInterval(): void {
+		if (this.intervalId !== null) {
+			clearInterval(this.intervalId);
+		}
+		this.intervalId = window.setInterval(() => {
+			this.$elapsedTimeMs.value += 1000;
+		}, 1000);
+	}
+
+	stopInterval(): void {
+		if (this.intervalId !== null) {
+			clearInterval(this.intervalId);
+			this.intervalId = null;
+		}
 	}
 
 	start(): void {
-		this.intervalId = window.setInterval(() => {
-			this.elapsedTime += 1000;
-			if (this.onUpdate) {
-				this.onUpdate();
-			}
-		}, 1000);
+		this.startInterval();
 	}
 
 	pause(): void {
 		if (this.intervalId !== null) {
-			clearInterval(this.intervalId);
-			this.intervalId = null;
-			if (this.onUpdate) {
-				this.onUpdate();
-			}
+			this.stopInterval();
 		} else {
-			this.intervalId = window.setInterval(() => {
-				this.elapsedTime += 1000;
-				if (this.onUpdate) {
-					this.onUpdate();
-				}
-			}, 1000);
+			this.startInterval();
 		}
 	}
 
 	reset(): void {
-		this.elapsedTime = 0;
-		if (this.intervalId !== null) {
-			clearInterval(this.intervalId);
-			this.intervalId = null;
-		}
-		if (this.onUpdate) {
-			this.onUpdate();
-		}
+		this.stopInterval();
+		this.$elapsedTimeMs.value = 0;
 	}
 
-	getFormattedTime(): string {
-		const seconds = Math.floor(this.elapsedTime / 1000) % 60;
-		const minutes = Math.floor(this.elapsedTime / 1000 / 60) % 60;
-		const hours = Math.floor(this.elapsedTime / 1000 / 60 / 60);
+	getFormattedTime(ms: number = this.$elapsedTimeMs.value): string {
+		const seconds = Math.floor(ms / 1000) % 60;
+		const minutes = Math.floor(ms / 1000 / 60) % 60;
+		const hours = Math.floor(ms / 1000 / 60 / 60);
 
 		const pad = (n: number) => (n < 10 ? "0" + n : n);
 
