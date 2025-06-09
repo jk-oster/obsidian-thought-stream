@@ -188,7 +188,6 @@ export default class ThoughtStream extends Plugin {
 			leaf = workspace.getRightLeaf(false);
 			await leaf?.setViewState({ type: VIEW_TYPE_THOUGHT_STREAM_CONTROLS, active: true });
 		}
-
 		console.log(leaf)
 
 		if (leaf) {

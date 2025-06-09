@@ -204,14 +204,20 @@ export class GhostReader {
 			return;
 		}
 
+		if (file.stat.size < this.plugin.settings.autoReadMinimumCharacterCount) {
+			if (this.plugin.settings.debugMode) {
+				new Notice(`File is too short for auto-generation: ${file.stat.size} characters.`);
+			}
+			return;
+		}
 
-		if (autoReadActiveFileExclude && file.path.includes(autoReadActiveFileExclude)) {
+		if (autoReadActiveFileExclude.length > 0 && autoReadActiveFileExclude.some(excludePath => file.path.includes(excludePath))) {
 			if (this.plugin.settings.debugMode) {
 				new Notice(`Skipping auto-generation for file: ${file.path} due to exclusion pattern.`);
 			}
 			return;
 		}
-		if (autoReadActiveFileInclude && !file.path.includes(autoReadActiveFileInclude)) {
+		if (autoReadActiveFileInclude.length > 0 && autoReadActiveFileInclude.some(includePath => !file.path.includes(includePath))) {
 			if (this.plugin.settings.debugMode) {
 				new Notice(`Skipping auto-generation for file: ${file.path} due to inclusion pattern.`);
 			}

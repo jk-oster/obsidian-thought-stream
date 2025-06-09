@@ -23,6 +23,7 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.empty();
 		this.createHeader('Thought Stream Settings', 'h1');
 		this.createQuickAccess();
+
 		this.createHeader('Ghost Whisper');
 		this.createApiKeySetting();
 		this.createApiUrlSetting();
@@ -34,10 +35,19 @@ export class SettingsTab extends PluginSettingTab {
 		this.createNewFileToggleSetting();
 		this.createNewFilePathSetting();
 		this.copyRecordingToClipboardToggleSetting();
+
 		this.createHeader('Ghost Writer');
+		this.createCompletionApiKeySetting();
+		this.createCompletionApiUrlSetting();
+		this.createCompletionModelSetting();
 		this.saveDraftsFilePathSetting();
+
 		this.createHeader('Ghost Reader');
 		this.autoReadActiveFileToggleSetting();
+		this.createAutoReadActiveFileIncludeSetting();
+		this.createAutoReadActiveFileExcludeSetting();
+		this.createMinimumCharacterCountSetting();
+
 		this.createHeader('Development');
 		this.createDebugModeToggleSetting();
 	}
@@ -86,6 +96,14 @@ export class SettingsTab extends PluginSettingTab {
 				cb.setButtonText('Report issue');
 				cb.onClick(() => {
 					openURL('https://github.com/jk-oster/obsidian-thought-stream/issues');
+				});
+			})
+			.addButton(cb => {
+				cb.setButtonText('Open Ghost-Reader');
+				cb.setTooltip('Open Ghost-Reader View');
+				cb.setIcon('ghost');
+				cb.onClick(() => {
+					this.plugin.activateControlsView();
 				});
 			});
 	}
@@ -296,11 +314,99 @@ export class SettingsTab extends PluginSettingTab {
 			.setDesc(
 				"Specify the path in the vault where to save the drafts files"
 			)
-			.addText((text) => {
-				text.setPlaceholder("Example: folder/drafts")
+			.addSearch((cb) => {
+				new FolderSuggest(this.app, cb.inputEl);
+				cb.setPlaceholder("Example: folder/drafts")
 					.setValue(this.plugin.settings.saveDraftsFilePath)
+					.onChange(async (new_folder) => {
+						// Trim folder and Strip ending slash if there
+						new_folder = new_folder.trim()
+						new_folder = new_folder.replace(/\/$/, "");
+
+						this.plugin.settings.saveDraftsFilePath = new_folder;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+				// @ts-ignore
+				cb.containerEl.addClass("settings-search");
+			});
+	}
+
+	private createCompletionApiKeySetting(): void {
+		this.createTextSetting(
+			"API Key",
+			"Enter your OpenAI API key for content generation",
+			"sk-...xxxx",
+			this.plugin.settings.completionApiKey || this.plugin.settings.transcriptionApiKey,
+			async (value) => {
+				this.plugin.settings.completionApiKey = value;
+				await this.settingsManager.saveSettings(this.plugin.settings);
+			}
+		);
+	}
+
+	private createCompletionApiUrlSetting(): void {
+		this.createTextSetting(
+			"API URL",
+			"Specify the endpoint that will be used to make requests to for content generation",
+			"https://api.your-custom-url.com",
+			this.plugin.settings.completionApiUrl,
+			async (value) => {
+				this.plugin.settings.completionApiUrl = value;
+				await this.settingsManager.saveSettings(this.plugin.settings);
+			}
+		);
+	}
+
+	private createCompletionModelSetting(): void {
+		this.createTextSetting(
+			"Model",
+			"Specify the machine learning model to use for content generation",
+			"gpt-4o-mini",
+			this.plugin.settings.completionModel,
+			async (value) => {
+				this.plugin.settings.completionModel = value;
+				await this.settingsManager.saveSettings(this.plugin.settings);
+			}
+		);
+	}
+
+	private createAutoReadActiveFileExcludeSetting(): void {
+		new Setting(this.containerEl)
+			.setName("Exclude folders from auto-read")
+			.setDesc(
+				"Specify folders to exclude from auto-reading. Separate multiple folders with commas."
+			)
+			.addText((text) => {
+				text
+					.setPlaceholder("Example: folder1, folder2")
+					.setValue(this.plugin.settings.autoReadActiveFileExclude.join(", "))
 					.onChange(async (value) => {
-						this.plugin.settings.saveDraftsFilePath = value;
+						this.plugin.settings.autoReadActiveFileExclude = value
+							.split(",")
+							.map((folder) => folder.trim());
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+			});
+	}
+
+	private createAutoReadActiveFileIncludeSetting(): void {
+		new Setting(this.containerEl)
+			.setName("Include folders for auto-read")
+			.setDesc(
+				"Specify folders to include for auto-reading. Separate multiple folders with commas."
+			)
+			.addText((text) => {
+				text
+					.setPlaceholder("Example: folder1, folder2")
+					.setValue(this.plugin.settings.autoReadActiveFileInclude.join(", "))
+					.onChange(async (value) => {
+						this.plugin.settings.autoReadActiveFileInclude = value
+							.split(",")
+							.map((folder) => folder.trim());
 						await this.settingsManager.saveSettings(
 							this.plugin.settings
 						);
@@ -322,6 +428,30 @@ export class SettingsTab extends PluginSettingTab {
 						await this.settingsManager.saveSettings(
 							this.plugin.settings
 						);
+					});
+			});
+	}
+
+	private createMinimumCharacterCountSetting(): void {
+		new Setting(this.containerEl)
+			.setName("Minimum character count")
+			.setDesc(
+				"Set the minimum number of characters in the active file to trigger auto-reading."
+			)
+			.addText((text) => {
+				text
+					.setPlaceholder("Example: 100")
+					.setValue(
+						this.plugin.settings.autoReadMinimumCharacterCount.toString()
+					)
+					.onChange(async (value) => {
+						const count = parseInt(value, 10);
+						if (!isNaN(count)) {
+							this.plugin.settings.autoReadMinimumCharacterCount = count;
+							await this.settingsManager.saveSettings(
+								this.plugin.settings
+							);
+						}
 					});
 			});
 	}

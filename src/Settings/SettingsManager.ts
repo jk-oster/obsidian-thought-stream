@@ -22,11 +22,15 @@ export interface ThoughtStreamSettings {
 	lastUsedPreset: string;
 
 	autoReadActiveFile: boolean;
-	autoReadActiveFileExclude: string;
-	autoReadActiveFileInclude: string;
+	autoReadActiveFileIncludeExcludeType: IncludeExcludeType;
+	autoReadActiveFileExclude: string[];
+	autoReadActiveFileInclude: string[];
+	autoReadMinimumCharacterCount: number;
 
 	debugMode: boolean;
 }
+
+type IncludeExcludeType = 'path' | 'tag';
 
 export const DEFAULT_SETTINGS: ThoughtStreamSettings = {
 	transcriptionApiKey: "",
@@ -48,8 +52,10 @@ export const DEFAULT_SETTINGS: ThoughtStreamSettings = {
 	lastUsedPreset: "",
 
 	autoReadActiveFile: false,
-	autoReadActiveFileExclude: "",
-	autoReadActiveFileInclude: "",
+	autoReadActiveFileIncludeExcludeType: "path",
+	autoReadActiveFileExclude: [],
+	autoReadActiveFileInclude: [],
+	autoReadMinimumCharacterCount: 25,
 
 	debugMode: false,
 };
