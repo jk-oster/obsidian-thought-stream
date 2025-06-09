@@ -69,6 +69,11 @@ export class TranscriptionHandler {
 						ch: cursorPosition.ch + text.length,
 					};
 					editor.setCursor(newPosition);
+				} else {
+					const activeFile = this.plugin.app.workspace.getActiveFile();
+					if (activeFile) {
+						await this.plugin.app.vault.append(activeFile, `\n${text}`);
+					}
 				}
 			}
 
@@ -78,7 +83,7 @@ export class TranscriptionHandler {
 				new Notice("Transcription copied to clipboard.");
 			}
 
-			new Notice("Audio parsed successfully.");
+			new Notice("Transcribed successfully.");
 		} catch (err) {
 			console.error("Error parsing audio:", err);
 			new Notice("Error parsing audio: " + err.message);
