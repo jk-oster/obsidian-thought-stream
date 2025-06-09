@@ -73,16 +73,16 @@
 }
 
 .thought-stream-modal .setting-item {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: center;
+
+	&:has(textarea) {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: center;
+	}
 
 	.setting-item-control {
-		width: 100%;
-		justify-content: flex-start;
-
-		textarea, input, select {
+		textarea {
 			width: 100%;
 			max-width: 100%;
 		}
@@ -90,6 +90,11 @@
 		textarea {
 			height: 4rem;
 			resize: vertical;
+		}
+
+		&:has(textarea) {
+			width: 100%;
+			justify-content: flex-start;
 		}
 	}
 }
@@ -100,4 +105,12 @@
 			height: 10rem;
 		}
 	}
+}
+
+.metadata-property[data-property-key="ghostreader-questions"] {
+	display: none;
+}
+
+.settings-search {
+	width: calc(100% - 20px);
 }
