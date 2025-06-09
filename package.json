@@ -1,7 +1,7 @@
 {
 	"name": "obisidian-thought-stream-ghost",
 	"version": "0.2.0",
-	"description": "Speech-to-text and content creation in Obsidian using OpenAI",
+	"description": "Speech-to-text, thought exploration and content creation with Ghost-Whisper, Ghost-Reader and Ghost-Writer.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -30,6 +30,7 @@
 		"typescript": "4.7.4"
 	},
 	"dependencies": {
+		"@popperjs/core": "^2.11.8",
 		"axios": "1.8.2",
 		"openai": "^5.1.1",
 		"zod": "^3.25.55"
