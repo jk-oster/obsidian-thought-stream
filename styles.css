@@ -83,6 +83,10 @@
 	border: 2px solid;
 }
 
+.thought-stream-status-bar-icon {
+	cursor: pointer;
+}
+
 .thought-stream-modal .setting-item {
 
 	&:has(textarea) {

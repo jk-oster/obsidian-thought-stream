@@ -8,6 +8,14 @@ export class Controller {
 		this.plugin = plugin;
 	}
 
+	public async toggleRecording() {
+		if (this.plugin.recorder.getRecordingState() === 'recording') {
+			await this.stopRecording();
+		} else {
+			await this.startRecording();
+		}
+	}
+
 	public async startRecording() {
 		console.log("start");
 		this.plugin.statusBar.updateStatus(RecordingStatus.Recording);

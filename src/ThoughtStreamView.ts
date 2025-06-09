@@ -105,8 +105,8 @@ export class ThoughtStreamView extends ItemView {
 		this.generateQuestionsButton = new ButtonComponent(buttonGroupEl2);
 		this.generateQuestionsButton
 			.setButtonText(" GhostReader")
-			.setTooltip("GhostReader: (Re-)Generate questions for currently active file.")
-			.setIcon("ghost")
+			.setTooltip("GhostReader: Read currently active file an (re-)generate questions.")
+			.setIcon("glasses")
 			.onClick(async () => {
 				await this.plugin.ghostReader.generateForActiveFile();
 			})
