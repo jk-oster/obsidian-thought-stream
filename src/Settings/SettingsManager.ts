@@ -1,6 +1,6 @@
 import { Plugin } from "obsidian";
-import {Notifiable} from "./Observable";
-import ThoughtStream from "../main";
+import {Notifiable} from "../Observable";
+import ThoughtStream from "../../main";
 
 export interface ThoughtStreamSettings {
 	transcriptionApiKey: string;
@@ -12,7 +12,6 @@ export interface ThoughtStreamSettings {
 	saveAudioFilePath: string;
 	createNewFileAfterRecording: boolean;
 	createNewFileAfterRecordingPath: string;
-	insertRecordingAtCursor: boolean;
 	saveRecordingToClipboard: boolean;
 
 	completionApiKey: string;
@@ -20,6 +19,7 @@ export interface ThoughtStreamSettings {
 	completionApiUrl: string;
 	completionPrompt: string;
 	saveDraftsFilePath: string;
+	lastUsedPreset: string;
 
 	autoReadActiveFile: boolean;
 	autoReadActiveFileExclude: string;
@@ -38,7 +38,6 @@ export const DEFAULT_SETTINGS: ThoughtStreamSettings = {
 	saveAudioFilePath: "",
 	createNewFileAfterRecording: true,
 	createNewFileAfterRecordingPath: "",
-	insertRecordingAtCursor: true,
 	saveRecordingToClipboard: false,
 
 	completionApiKey: "",
@@ -46,6 +45,7 @@ export const DEFAULT_SETTINGS: ThoughtStreamSettings = {
 	completionModel: "gpt-4o-mini",
 	completionPrompt: "",
 	saveDraftsFilePath: "",
+	lastUsedPreset: "",
 
 	autoReadActiveFile: false,
 	autoReadActiveFileExclude: "",

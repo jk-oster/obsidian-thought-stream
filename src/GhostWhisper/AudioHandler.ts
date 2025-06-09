@@ -1,8 +1,10 @@
+// Credits go to Nik Danilov's Whisper Plugin: https://github.com/nikdanilov/whisper-obsidian-plugin
+
 import axios from "axios";
 import ThoughtStream from "main";
 import { Notice, MarkdownView } from "obsidian";
-import { getBaseFileName } from "./utils";
-import {Observable} from "./Observable";
+import { getBaseFileName } from "../utils";
+import {Observable} from "../Observable";
 
 export type AudioHandlerState = 'processing' | 'idle';
 export type TranscriptionResult = {

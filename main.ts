@@ -1,20 +1,20 @@
 import {Plugin, WorkspaceLeaf} from "obsidian";
-import { Timer } from "src/Timer";
-import {RecorderModal} from "src/RecorderModal";
+import { Timer } from "src/GhostWhisper/Timer";
+import {RecorderModal} from "src/GhostWhisper/RecorderModal";
 import {ThoughtStreamView, VIEW_TYPE_THOUGHT_STREAM_CONTROLS} from "src/ThoughtStreamView";
-import { AudioHandler } from "src/AudioHandler";
-import { SettingsTab } from "src/SettingsTab";
-import { SettingsManager, ThoughtStreamSettings } from "src/SettingsManager";
-import { NativeAudioRecorder } from "src/AudioRecorder";
+import { AudioHandler } from "src/GhostWhisper/AudioHandler";
+import { SettingsTab } from "src/Settings/SettingsTab";
+import { SettingsManager, ThoughtStreamSettings } from "src/Settings/SettingsManager";
+import { NativeAudioRecorder } from "src/GhostWhisper/AudioRecorder";
 import { RecordingStatus, StatusBar } from "src/StatusBar";
 import {Notifiable} from "./src/Observable";
-import {TranscriptionHandler} from "./src/TransriptionHandler";
+import {TranscriptionHandler} from "./src/GhostWhisper/TransriptionHandler";
 import {AiClient} from "./src/AiClient";
-import {GhostReader} from "./src/GhostReader";
-import {GhostWriter} from "./src/GhostWriter";
-import {GhostWriterModal} from "./src/GhostWriterModal";
-import {Controller} from "./src/Controller";
-import {CreatePresetModal} from "./src/CreatePresetModal";
+import {GhostReader} from "./src/GhostReader/GhostReader";
+import {GhostWriter} from "./src/GhostWriter/GhostWriter";
+import {GhostWriterModal} from "./src/GhostWriter/GhostWriterModal";
+import {Controller} from "./src/GhostWhisper/Controller";
+import {CreatePresetModal} from "./src/GhostWriter/CreatePresetModal";
 export default class ThoughtStream extends Plugin {
 	settings: ThoughtStreamSettings;
 	settingsManager: SettingsManager;
@@ -100,7 +100,7 @@ export default class ThoughtStream extends Plugin {
 	addCommands() {
 		this.addCommand({
 			id: "start-stop-recording",
-			name: "GhostListener - Start/stop recording",
+			name: "GhostWhisper - Start/stop recording",
 			callback: async () => {
 				if (this.statusBar.$state.value !== 'recording') {
 					this.statusBar.updateStatus('recording');

@@ -1,4 +1,4 @@
-import { type App, Notice, Plugin, TFile } from "obsidian";
+import {type App, normalizePath, Notice, Plugin, TAbstractFile, TFile, TFolder, Vault} from "obsidian";
 
 export const updateFrontMatterByFile = async (
 	app: App,
@@ -98,4 +98,56 @@ export function getBaseFileName(filePath: string) {
 
 	// Remove the extension from the file name
 	return fileName.substring(0, fileName.lastIndexOf("."));
+}
+
+export function openURL(link: string): void {
+	window.open(link, '_blank');
+}
+
+export function getTFilesFromFolder(
+	app: App,
+	folderStr: string
+): Array<TFile> {
+	const folder = resolveTFolder(app, folderStr);
+
+	const files: Array<TFile> = [];
+	Vault.recurseChildren(folder, (file: TAbstractFile) => {
+		if (file instanceof TFile) {
+			files.push(file);
+		}
+	});
+
+	files.sort((a, b) => {
+		return a.path.localeCompare(b.path);
+	});
+
+	return files;
+}
+
+export function resolveTFolder(app: App, folder_str: string): TFolder {
+	folder_str = normalizePath(folder_str);
+
+	const folder = app.vault.getAbstractFileByPath(folder_str);
+	if (!folder) {
+		throw new Error(`Folder "${folder_str}" doesn't exist`);
+	}
+	if (!(folder instanceof TFolder)) {
+		throw new Error(`${folder_str} is a file, not a folder`);
+	}
+
+	return folder;
+}
+
+export function resolveTFile(app: App, file_str: string): TFile {
+	file_str = normalizePath(file_str);
+
+	const file = app.vault.getAbstractFileByPath(file_str);
+	if (!file) {
+		throw new Error(`File "${file_str}" doesn't exist`);
+	}
+	if (!(file instanceof TFile)) {
+		throw new Error(`${file_str} is a folder, not a file`);
+	}
+
+	return file;
 }

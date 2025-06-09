@@ -1,5 +1,5 @@
-import {RecordingStatus} from "./StatusBar";
-import ThoughtStream from "../main";
+import {RecordingStatus} from "../StatusBar";
+import ThoughtStream from "../../main";
 
 export class Controller {
 	private readonly plugin: ThoughtStream;

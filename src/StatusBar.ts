@@ -1,4 +1,6 @@
-import { Plugin } from "obsidian";
+// Credits go to Nik Danilov's Whisper Plugin: https://github.com/nikdanilov/whisper-obsidian-plugin
+
+
 import {Observable} from "./Observable";
 import ThoughtStream from "../main";
 
@@ -65,7 +67,7 @@ export class StatusBar {
 					break;
 				case 'idle':
 				default:
-					this.statusBarItem.textContent = "GhostListener Idle";
+					this.statusBarItem.textContent = "GhostWhisper Idle";
 					this.statusBarItem.style.color = "green";
 					break;
 			}

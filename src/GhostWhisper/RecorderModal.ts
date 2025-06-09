@@ -1,6 +1,6 @@
 import ThoughtStream from "main";
 import {BaseComponent, ButtonComponent, Component, ItemView, Modal, WorkspaceLeaf} from "obsidian";
-import { RecordingStatus } from "./StatusBar";
+import { RecordingStatus } from "../StatusBar";
 import {RecorderState} from "./AudioRecorder";
 
 export interface Controls {

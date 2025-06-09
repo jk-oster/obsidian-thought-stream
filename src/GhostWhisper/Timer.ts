@@ -1,4 +1,7 @@
-import {Observable} from "./Observable";
+// Credits go to Nik Danilov's Whisper Plugin: https://github.com/nikdanilov/whisper-obsidian-plugin
+
+
+import {Observable} from "../Observable";
 
 export class Timer {
 	public readonly $elapsedTimeMs: Observable<number> = new Observable<number>(0);

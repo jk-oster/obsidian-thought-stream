@@ -1,10 +1,10 @@
-import ThoughtStream from "../main";
-import {Observable} from "./Observable";
+import ThoughtStream from "../../main";
+import {Observable} from "../Observable";
 import OpenAI from "openai";
 import {zodResponseFormat, zodTextFormat} from "openai/helpers/zod";
 import {z} from "zod";
 import {MarkdownView, Notice, TFile} from "obsidian";
-import {cleanFileName, getActiveFile, updateFrontMatterByFile} from "./utils";
+import {cleanFileName, getActiveFile, updateFrontMatterByFile} from "../utils";
 
 export type GhostWriterState = 'loading' | 'idle' | 'error';
 
@@ -14,6 +14,7 @@ export type GhostWriterPreset = {
 	information?: string,
 	contentType: string,
 	creativity: Creativity,
+	wordCount?: number,
 };
 
 const defaultConfig: GhostWriterPreset = {
@@ -136,6 +137,11 @@ export class GhostWriter {
 					(consider the style and tone of writing, not so much the content!), 
 					imitate the style of this example as closely as possible:\n${config.example || ''}
 					` : ''}
+					${config.wordCount ? `
+					---
+					Please try to keep the ${config.contentType || 'text'} to around ${config.wordCount} words.
+					` : ''}
+					}
 					`,
 				},
 			]
@@ -240,5 +246,29 @@ export class GhostWriter {
 			console.error("Error writing content file:", err);
 			new Notice("Error writing content file: " + err.message);
 		}
+	}
+
+	async getConfigFromPreset(filePath: string): Promise<Partial<GhostWriterPreset>> {
+		const file = this.plugin.app.vault.getAbstractFileByPath(filePath);
+		if (!file || !(file instanceof TFile)) {
+			new Notice(`Preset file not found: ${filePath}`);
+			return {};
+		}
+
+		const content = await this.plugin.app.vault.cachedRead(file);
+		const frontmatter = this.plugin.app.metadataCache.getFileCache(file)?.frontmatter;
+
+		if (!frontmatter) {
+			new Notice(`No frontmatter found in preset file: ${filePath}`);
+			return {};
+		}
+
+		return {
+			audience: frontmatter.audience || "general",
+			contentType: frontmatter.contentType || "text",
+			information: frontmatter.information || "",
+			example: content.replace(/^---\n[\s\S]*?\n---\n/, '').trim(),
+			creativity: frontmatter.creativity || 'balanced',
+		};
 	}
 }

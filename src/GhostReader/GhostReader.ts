@@ -1,11 +1,11 @@
-import ThoughtStream from "../main";
-import {Observable} from "./Observable";
+import ThoughtStream from "../../main";
+import {Observable} from "../Observable";
 import {zodTextFormat, zodResponseFormat} from "openai/helpers/zod";
 import {z} from "zod";
-import {getActiveFile} from "./utils";
+import {getActiveFile} from "../utils";
 import {MarkdownView, Notice, TFile} from "obsidian";
-import {GhostWriterPreset} from "./GhostWriter";
-import {RecorderModal} from "./RecorderModal";
+import {GhostWriterPreset} from "../GhostWriter/GhostWriter";
+import {RecorderModal} from "../GhostWhisper/RecorderModal";
 
 export type GhostReaderState = 'loading' | 'idle' | 'error';
 

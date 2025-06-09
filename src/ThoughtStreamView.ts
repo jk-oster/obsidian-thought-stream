@@ -1,8 +1,8 @@
 import {ButtonComponent, ItemView, WorkspaceLeaf} from "obsidian";
 import ThoughtStream from "../main";
-import {RecorderState} from "./AudioRecorder";
-import {GhostWriterModal} from "./GhostWriterModal";
-import {AnswerModal} from "./AnswerModal";
+import {RecorderState} from "./GhostWhisper/AudioRecorder";
+import {GhostWriterModal} from "./GhostWriter/GhostWriterModal";
+import {AnswerModal} from "./GhostReader/AnswerModal";
 
 export const VIEW_TYPE_THOUGHT_STREAM_CONTROLS = 'thought-stream-recorder-view';
 

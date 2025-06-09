@@ -1,7 +1,9 @@
 import ThoughtStream from "main";
 import { App, PluginSettingTab, Setting, TFolder } from "obsidian";
 import { SettingsManager } from "./SettingsManager";
-import {Notifiable} from "./Observable";
+import {Notifiable} from "../Observable";
+import {openURL} from "../utils";
+import {FolderSuggest} from "./Suggest/FolderSuggest";
 
 export class SettingsTab extends PluginSettingTab {
 	private plugin: ThoughtStream;
@@ -20,7 +22,8 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 		this.createHeader('Thought Stream Settings', 'h1');
-		this.createHeader('Ghost Listener');
+		this.createQuickAccess();
+		this.createHeader('Ghost Whisper');
 		this.createApiKeySetting();
 		this.createApiUrlSetting();
 		this.createModelSetting();
@@ -30,13 +33,12 @@ export class SettingsTab extends PluginSettingTab {
 		this.createSaveAudioFilePathSetting();
 		this.createNewFileToggleSetting();
 		this.createNewFilePathSetting();
-		this.insertRecordingAtCursorToggleSetting();
 		this.copyRecordingToClipboardToggleSetting();
 		this.createHeader('Ghost Writer');
 		this.saveDraftsFilePathSetting();
 		this.createHeader('Ghost Reader');
 		this.autoReadActiveFileToggleSetting();
-
+		this.createHeader('Development');
 		this.createDebugModeToggleSetting();
 	}
 
@@ -56,6 +58,36 @@ export class SettingsTab extends PluginSettingTab {
 
 	private createHeader(text: string, tag: keyof HTMLElementTagNameMap = 'h2'): void {
 		this.containerEl.createEl(tag, { text });
+	}
+
+	private createQuickAccess() {
+		new Setting(this.containerEl)
+			.setName('Quick access')
+			.addButton(cb => {
+				cb.setCta();
+				cb.setButtonText('Docs');
+				cb.onClick(() => {
+					openURL('https://github.com/jk-oster/obsidian-thought-stream');
+				});
+			})
+			.addButton(cb => {
+				cb.setButtonText('Open FAQ');
+				cb.onClick(() => {
+					openURL('https://github.com/jk-oster/obsidian-thought-stream');
+				});
+			})
+			.addButton(cb => {
+				cb.setButtonText('GitHub');
+				cb.onClick(() => {
+					openURL('https://github.com/jk-oster/obsidian-thought-stream');
+				});
+			})
+			.addButton(cb => {
+				cb.setButtonText('Report issue');
+				cb.onClick(() => {
+					openURL('https://github.com/jk-oster/obsidian-thought-stream/issues');
+				});
+			});
 	}
 
 	private createTextSetting(
@@ -169,17 +201,23 @@ export class SettingsTab extends PluginSettingTab {
 			.setDesc(
 				"Specify the path in the vault where to save the audio files"
 			)
-			.addText((text) =>
-				text
-					.setPlaceholder("Example: folder/audio")
+			.addSearch((cb) => {
+				new FolderSuggest(this.app, cb.inputEl);
+				cb.setPlaceholder("Example: folder/audio")
 					.setValue(this.plugin.settings.saveAudioFilePath)
-					.onChange(async (value) => {
-						this.plugin.settings.saveAudioFilePath = value;
+					.onChange(async (new_folder) => {
+						// Trim folder and Strip ending slash if there
+						new_folder = new_folder.trim()
+						new_folder = new_folder.replace(/\/$/, "");
+
+						this.plugin.settings.saveAudioFilePath = new_folder;
 						await this.settingsManager.saveSettings(
 							this.plugin.settings
 						);
-					})
-			)
+					});
+				// @ts-ignore
+				cb.containerEl.addClass("settings-search");
+			})
 			.setDisabled(!this.plugin.settings.saveAudioFile);
 	}
 
@@ -203,24 +241,6 @@ export class SettingsTab extends PluginSettingTab {
 							this.plugin.settings
 						);
 						this.createNewFileInput.setDisabled(!value);
-					});
-			});
-	}
-
-	private insertRecordingAtCursorToggleSetting(): void {
-		new Setting(this.containerEl)
-			.setName("Insert recording at cursor")
-			.setDesc(
-				"Turn on to insert the transcription at the current cursor position in the active note."
-			)
-			.addToggle((toggle) => {
-				toggle
-					.setValue(this.plugin.settings.insertRecordingAtCursor)
-					.onChange(async (value) => {
-						this.plugin.settings.insertRecordingAtCursor = value;
-						await this.settingsManager.saveSettings(
-							this.plugin.settings
-						);
 					});
 			});
 	}
@@ -249,19 +269,24 @@ export class SettingsTab extends PluginSettingTab {
 			.setDesc(
 				"Specify the path in the vault where to save the transcription files"
 			)
-			.addText((text) => {
-				text.setPlaceholder("Example: folder/note")
-					.setValue(
-						this.plugin.settings.createNewFileAfterRecordingPath
-					)
-					.onChange(async (value) => {
-						this.plugin.settings.createNewFileAfterRecordingPath =
-							value;
+			.addSearch((cb) => {
+				new FolderSuggest(this.app, cb.inputEl);
+				cb.setPlaceholder("Example: folder/note")
+					.setValue(this.plugin.settings.createNewFileAfterRecordingPath)
+					.onChange(async (new_folder) => {
+						// Trim folder and Strip ending slash if there
+						new_folder = new_folder.trim()
+						new_folder = new_folder.replace(/\/$/, "");
+
+						this.plugin.settings.createNewFileAfterRecordingPath = new_folder;
 						await this.settingsManager.saveSettings(
 							this.plugin.settings
 						);
 					});
-			});
+				// @ts-ignore
+				cb.containerEl.addClass("settings-search");
+			})
+			.setDisabled(!this.plugin.settings.createNewFileAfterRecording);
 	}
 
 

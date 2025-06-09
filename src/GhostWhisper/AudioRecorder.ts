@@ -1,5 +1,7 @@
+// Credits go to Nik Danilov's Whisper Plugin: https://github.com/nikdanilov/whisper-obsidian-plugin
+
 import { Notice } from "obsidian";
-import {Observable} from "./Observable";
+import {Observable} from "../Observable";
 
 export interface AudioRecorder {
 	startRecording(): Promise<void>;

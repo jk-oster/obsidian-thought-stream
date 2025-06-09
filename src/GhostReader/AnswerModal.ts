@@ -1,6 +1,6 @@
 import {App, ButtonComponent, Modal, PopoverSuggest, Scope, Setting, SuggestModal, TFile} from "obsidian";
-import ThoughtStream from "../main";
-import {Creativity, CreativityOptions, GhostWriterPreset} from "./GhostWriter";
+import ThoughtStream from "../../main";
+import {Creativity, CreativityOptions, GhostWriterPreset} from "../GhostWriter/GhostWriter";
 
 export class AnswerModal extends Modal  {
 	private plugin: ThoughtStream;
