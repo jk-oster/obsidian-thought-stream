@@ -6,11 +6,15 @@
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"release": "release-it"
+		"release": "release-it",
+		"docs:dev": "vitepress dev docs",
+		"docs:build": "vitepress build docs",
+		"docs:preview": "vitepress preview docs"
 	},
 	"keywords": [],
 	"author": "Jakob Osterberger",
 	"license": "MIT",
+	"type": "module",
 	"devDependencies": {
 		"@commitlint/cli": "^17.6.5",
 		"@commitlint/config-conventional": "^17.6.5",
@@ -33,6 +37,8 @@
 		"@popperjs/core": "^2.11.8",
 		"axios": "1.8.2",
 		"openai": "^5.1.1",
+		"vite": "^6.3.5",
+		"vitepress": "^1.6.3",
 		"zod": "^3.25.55"
 	},
 	"release-it": {
