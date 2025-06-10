@@ -23,3 +23,5 @@ data.json
 
 # env variables
 .env
+
+docs/.vitepress/cache

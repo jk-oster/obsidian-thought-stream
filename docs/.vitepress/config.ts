@@ -22,7 +22,8 @@ export default defineConfig({
   },
 
   sitemap: {
-    hostname: 'https://vaultlens.com'
+    hostname: 'https://jk-oster.github.io/obisdian-thought-stream',
+    // hostname: 'https://vaultlens.com'
   },
   
   // https://vitepress.dev/reference/default-theme-config
