@@ -4,6 +4,7 @@
 import {Observable} from "./Observable";
 import ThoughtStream from "../main";
 import {setIcon} from "obsidian";
+import {RecorderState} from "./GhostWhisper/AudioRecorder";
 
 export enum RecordingStatus {
 	Idle = "idle",
@@ -11,7 +12,7 @@ export enum RecordingStatus {
 	Processing = "processing",
 }
 
-export type StatusBarState = 'idle' | 'paused' | 'recording' | 'processing';
+export type StatusBarState = RecorderState | 'processing';
 
 export class StatusBar {
 	private plugin: ThoughtStream;
@@ -19,7 +20,7 @@ export class StatusBar {
 	private statusBarPauseIcon: HTMLElement | null = null;
 	private readonly statusBarItem: HTMLElement | null = null;
 	private readonly subscriptions = new Set<() => void>();
-	public readonly $state: Observable<StatusBarState> = new Observable<StatusBarState>('idle');
+	public readonly $state: Observable<StatusBarState> = new Observable<StatusBarState>('inactive');
 
 	constructor(plugin: ThoughtStream) {
 		this.plugin = plugin;
@@ -32,26 +33,14 @@ export class StatusBar {
 		});
 
 		this.subscriptions.add(this.plugin.recorder.$state.subscribe((state) => {
-			switch (state) {
-				case 'inactive':
-					this.updateStatus('idle');
-					break;
-				case 'recording':
-					this.updateStatus('recording');
-					break;
-				case 'paused':
-					this.updateStatus('paused');
-					break;
-				default:
-					this.updateStatus('idle');
-			}
+			this.updateStatus(state);
 		}));
 
 		this.subscriptions.add(this.plugin.audioHandler.$state.subscribe((state) => {
 			if (state === 'processing') {
 				this.updateStatus('processing');
 			} else if (state === 'idle') {
-				this.updateStatus('idle');
+				this.updateStatus('inactive');
 			}
 		}));
 
@@ -86,7 +75,7 @@ export class StatusBar {
 					this.statusBarIcon.style.color = "green";
 					setIcon(this.statusBarIcon, "play");
 					break;
-				case 'idle':
+				case 'inactive':
 				default:
 					this.statusBarItem.textContent = "GhostWhisper idle";
 					// this.statusBarItem.style.color = "green";
