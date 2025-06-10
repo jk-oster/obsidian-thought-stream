@@ -174,6 +174,9 @@ export class GhostWriter {
 			// If the file already exists, append a timestamp to the filename
 			const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 			noteFilePath = `${this.plugin.settings.createNewFileAfterRecordingPath}/${fileName}-${timestamp}.md`;
+			if (this.plugin.settings.debugMode) {
+				new Notice(`File already exists: ${document.title}`);
+			}
 		}
 
 		if (this.plugin.settings.debugMode) {
@@ -187,6 +190,7 @@ export class GhostWriter {
 			"audience": config.audience || "general",
 			"contentType": config.contentType || "text",
 			"creativity": config.creativity || "balanced",
+			"information": config.information || "",
 			"src": document.srcFile ? `[[${document.srcFile.basename}]]` : undefined,
 			"preset" : '',
 		};

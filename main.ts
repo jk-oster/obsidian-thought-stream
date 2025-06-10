@@ -118,7 +118,7 @@ export default class ThoughtStream extends Plugin {
 						.replace(/[:.]/g, "-")}.${extension}`;
 					// Use audioBlob to send or save the recorded audio as needed
 					await this.audioHandler.fetchTranscription(audioBlob, fileName);
-					this.statusBar.updateStatus('idle');
+					this.statusBar.updateStatus('inactive');
 				}
 			},
 			hotkeys: [

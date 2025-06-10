@@ -14,7 +14,6 @@ export class GhostWriterModal extends Modal  {
 	private additionalInstructions: Setting;
 	private example: Setting;
 
-
 	constructor(plugin: ThoughtStream, config: Partial<GhostWriterPreset> = {}) {
 		super(plugin.app);
 		this.plugin = plugin;
@@ -65,7 +64,7 @@ export class GhostWriterModal extends Modal  {
 			.setName('Content Type (e.g. newsletter, blog post)')
 			.setDesc('Please be as specific as possible, and only mention the type of content you want to generate. For instance if your newsletter is called "The Weekly Digest", you should just write "newsletter" here.')
 			.addText((component) => {
-				component.setValue(this.config.contentType ?? 'personal journal')
+				component.setValue(this.config.contentType ?? '')
 					.onChange(async (value) => {
 						this.config.contentType = value;
 					});
