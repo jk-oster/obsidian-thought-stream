@@ -13,7 +13,7 @@ Any feedback and suggestions are welcome.
 
 - ⌛ 
 
-## Current Work in Progress >= 2.6.0
+## Current Work in Progress
 
 - ⚒️ 
 

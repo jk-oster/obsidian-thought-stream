@@ -15,7 +15,7 @@ editLink: true
 ## How can I troubleshoot connection problems between Thought Stream and my LLM-Provider?
 
 
-## How do I test the latest extension version from Github?
+## How do I test the latest extension version from GitHub?
 
 
 ## Is Vault Lens also available for Obsidian Mobile?

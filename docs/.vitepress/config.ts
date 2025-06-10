@@ -56,7 +56,7 @@ export default defineConfig({
           { text: 'Feature Guide', link: '/feature-guide' },
           { text: 'FAQ & Troubleshooting', link: '/faq' },
           { text: 'Roadmap', link: '/roadmap' },
-          { text: 'Privacy & Permissions', link: '/privacy' },
+          // { text: 'Privacy & Permissions', link: '/privacy' },
           { text: 'Credits', link: '/credits' }
         ]
       }

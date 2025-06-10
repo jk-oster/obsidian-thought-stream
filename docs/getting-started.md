@@ -5,9 +5,9 @@ description: Start using Thought Stream in just a minute and learn how to use it
 editLink: true
 ---
 
-# Setup
+# Getting Started with Thought Stream
 
-### Plugin Configuration
+## Plugin Configuration
 
 ## Installation
 
