@@ -25,3 +25,5 @@ data.json
 .env
 
 docs/.vitepress/cache
+
+dist.zip

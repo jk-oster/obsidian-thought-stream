@@ -130,6 +130,14 @@ export default class ThoughtStream extends Plugin {
 		});
 
 		this.addCommand({
+			id: "recording-controls",
+			name: "GhostWhisper - Start recording and open controls",
+			callback: async () => {
+				this.getRecorderModal().open();
+			}
+		});
+
+		this.addCommand({
 			id: "upload-audio-file",
 			name: "GhostListener - Upload audio file",
 			callback: () => {
