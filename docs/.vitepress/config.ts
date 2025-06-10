@@ -21,8 +21,9 @@ export default defineConfig({
     return head
   },
 
+  base: '/obsidian-thought-stream/',
   sitemap: {
-    hostname: 'https://jk-oster.github.io/obisdian-thought-stream',
+    hostname: 'https://jk-oster.github.io/obsidian-thought-stream/',
     // hostname: 'https://vaultlens.com'
   },
   
