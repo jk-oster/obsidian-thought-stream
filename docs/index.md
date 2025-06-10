@@ -7,8 +7,11 @@ description: Your personal Ghost-Reader for exploring ideas, Ghost-Writer for cr
 
 hero:
   name: "Thought Stream"
-  text: "Explore, express, transcribe, create."
-  tagline: 
+#  text: "Explore Express Transcribe Create"
+  tagline: "Explore your ideas, express your thoughts and create useful content effortlessly."
+  image:
+    src: "/ghost-reader-logo.png"
+    alt: "VitePress"
   actions:
     - theme: brand
       text: Install now

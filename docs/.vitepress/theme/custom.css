@@ -1,6 +1,10 @@
 /* .vitepress/theme/custom.css */
 .vp-doc img {
-  border-radius: 0.5rem;
+	border-radius: 0.5rem;
+}
+
+.VPImage.image-src {
+	border-radius: 0.5rem;
 }
 
 .is-home {

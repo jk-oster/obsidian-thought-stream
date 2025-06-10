@@ -3,7 +3,7 @@ import { defineConfig, HeadConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Thought Stream",
-  description: "Search your Obsidian notes simultaneously as you type your search in your favorite search engine.",
+  description: "A plugin for Obsidian to explore your ideas, express your thoughts and create useful content effortlessly.",
   lastUpdated: true,
 
   transformHead: ({ pageData }) => {
@@ -37,13 +37,13 @@ export default defineConfig({
     search: {
       provider: 'local'
     },
-    logo: '/icon128.png',
+    logo: '/ghost.svg',
 
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Feature Guide', link: '/feature-guide' },
-      { text: 'Install', link: 'https://chromewebstore.google.com/detail/vault-lens/ikdemlfoilfdmcdiegelchlhfnkpmaee' },
+      { text: 'Install', link: 'obsidian://show-plugin?id=thought-stream' },
       { text: 'Creator', link: 'https://www.jakobosterberger.com' }
     ],
 
@@ -67,7 +67,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'Released under the GPLv3 License.',
+      message: 'Released under the MIT License.',
       copyright: 'Copyright © 2025-present Jakob Osterberger'
     }
   },
