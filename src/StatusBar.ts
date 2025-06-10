@@ -16,15 +16,17 @@ export type StatusBarState = 'idle' | 'paused' | 'recording' | 'processing';
 export class StatusBar {
 	private plugin: ThoughtStream;
 	private readonly statusBarIcon: HTMLElement | null = null;
+	private statusBarPauseIcon: HTMLElement | null = null;
 	private readonly statusBarItem: HTMLElement | null = null;
 	private readonly subscriptions = new Set<() => void>();
 	public readonly $state: Observable<StatusBarState> = new Observable<StatusBarState>('idle');
 
 	constructor(plugin: ThoughtStream) {
 		this.plugin = plugin;
+		this.statusBarItem = this.plugin.addStatusBarItem();
+
 		this.statusBarIcon = this.plugin.addStatusBarItem();
 		this.statusBarIcon.addClass('thought-stream-status-bar-icon');
-		this.statusBarItem = this.plugin.addStatusBarItem();
 		this.statusBarIcon.onClickEvent(async () => {
 			await this.plugin.controller.toggleRecording();
 		});
@@ -54,40 +56,58 @@ export class StatusBar {
 		}));
 
 		this.updateStatus();
+		this.updatePauseIcon();
 	}
 
 	updateStatus(status: StatusBarState = this.$state.value) {
 		if (this.$state.value !== status) {
 			this.$state.value = status;
 		}
+		this.updatePauseIcon(status);
+
 		if (this.statusBarItem && this.statusBarIcon) {
 			switch (status) {
 				case 'recording':
-					this.statusBarItem.textContent = "Recording...";
+					this.statusBarItem.textContent = "GhostWhisper recording...";
 					// this.statusBarItem.style.color = "red";
 					this.statusBarIcon.style.color = "red";
 					setIcon(this.statusBarIcon, "square");
+					this.updatePauseIcon();
 					break;
 				case 'processing':
-					this.statusBarItem.textContent = "Processing audio...";
+					this.statusBarItem.textContent = "GhostWhisper processing audio...";
 					// this.statusBarItem.style.color = "orange";
 					this.statusBarIcon.style.color = "orange";
 					setIcon(this.statusBarIcon, "sync");
 					break;
 				case 'paused':
-					this.statusBarItem.textContent = "Paused...";
+					this.statusBarItem.textContent = "GhostWhisper paused";
 					// this.statusBarItem.style.color = "orange";
-					this.statusBarIcon.style.color = "orange";
+					this.statusBarIcon.style.color = "green";
 					setIcon(this.statusBarIcon, "play");
 					break;
 				case 'idle':
 				default:
-					this.statusBarItem.textContent = "GhostWhisper Idle";
+					this.statusBarItem.textContent = "GhostWhisper idle";
 					// this.statusBarItem.style.color = "green";
 					this.statusBarIcon.style.color = "green";
 					setIcon(this.statusBarIcon, "mic");
 					break;
 			}
+		}
+	}
+
+	updatePauseIcon(state: StatusBarState = this.$state.value) {
+		this.statusBarPauseIcon?.remove();
+		this.statusBarPauseIcon = null;
+		if (state === 'recording') {
+			this.statusBarPauseIcon = this.plugin.addStatusBarItem();
+			this.statusBarPauseIcon.addClass('thought-stream-status-bar-icon');
+			setIcon(this.statusBarPauseIcon, "pause");
+			this.statusBarPauseIcon.style.color = "orange";
+			this.statusBarPauseIcon.onClickEvent(async () => {
+				await this.plugin.controller.pauseRecording();
+			});
 		}
 	}
 
@@ -98,6 +118,10 @@ export class StatusBar {
 
 		if (this.statusBarIcon) {
 			this.statusBarIcon.remove();
+		}
+
+		if (this.statusBarPauseIcon) {
+			this.statusBarPauseIcon.remove();
 		}
 
 		this.subscriptions.forEach((unsubscribe) => unsubscribe());
