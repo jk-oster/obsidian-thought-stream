@@ -2,7 +2,7 @@ import {Plugin, WorkspaceLeaf} from "obsidian";
 import { Timer } from "src/GhostWhisper/Timer";
 import {RecorderModal} from "src/GhostWhisper/RecorderModal";
 import {ThoughtStreamView, VIEW_TYPE_THOUGHT_STREAM_CONTROLS} from "src/ThoughtStreamView";
-import { AudioHandler } from "src/GhostWhisper/AudioHandler";
+import { GhostWhisper } from "src/GhostWhisper/GhostWhisper";
 import { SettingsTab } from "src/Settings/SettingsTab";
 import { SettingsManager, ThoughtStreamSettings } from "src/Settings/SettingsManager";
 import { NativeAudioRecorder } from "src/GhostWhisper/AudioRecorder";
@@ -23,7 +23,7 @@ export default class ThoughtStream extends Plugin {
 	ghostWriter: GhostWriter;
 	timer: Timer;
 	recorder: NativeAudioRecorder;
-	audioHandler: AudioHandler;
+	audioHandler: GhostWhisper;
 	transcriptionHandler: TranscriptionHandler;
 	recorderModal: RecorderModal | null = null;
 	statusBar: StatusBar;
@@ -75,7 +75,7 @@ export default class ThoughtStream extends Plugin {
 
 		this.timer = new Timer();
 		this.recorder = new NativeAudioRecorder();
-		this.audioHandler = new AudioHandler(this);
+		this.audioHandler = new GhostWhisper(this);
 		this.transcriptionHandler = new TranscriptionHandler(this);
 		this.statusBar = new StatusBar(this);
 
@@ -100,7 +100,8 @@ export default class ThoughtStream extends Plugin {
 	addCommands() {
 		this.addCommand({
 			id: "start-stop-recording",
-			name: "GhostWhisper - Start/stop recording",
+			icon: 'activity',
+			name: "Start/stop recording",
 			callback: async () => {
 				if (this.statusBar.$state.value !== 'recording') {
 					this.statusBar.updateStatus('recording');
@@ -131,15 +132,20 @@ export default class ThoughtStream extends Plugin {
 
 		this.addCommand({
 			id: "recording-controls",
-			name: "GhostWhisper - Start recording and open controls",
+			icon: "mic",
+			name: "Open recorder controls (and Start recording)",
 			callback: async () => {
+				if (this.recorder.getRecordingState() === 'inactive' || !this.recorder.getRecordingState()) {
+					this.controller.startRecording();
+				}
 				this.getRecorderModal().open();
 			}
 		});
 
 		this.addCommand({
 			id: "upload-audio-file",
-			name: "GhostListener - Upload audio file",
+			icon: 'file-audio',
+			name: "Upload audio file and transcribe",
 			callback: () => {
 				// Create an input element for file selection
 				const fileInput = document.createElement("input");
@@ -168,14 +174,15 @@ export default class ThoughtStream extends Plugin {
 
 		this.addCommand({
 			id: "create-content",
-			name: "GhostWriter - Create Content",
+			icon: "wand-sparkles",
+			name: "Create Content",
 			callback: () => {
 				new GhostWriterModal(this).open();
 			},
 		});
 		this.addCommand({
 			id: "create-content-preset",
-			name: "GhostWriter - Create Content Preset",
+			name: "Create Content Preset",
 			callback: () => {
 				new CreatePresetModal(this).open();
 			},
@@ -196,7 +203,10 @@ export default class ThoughtStream extends Plugin {
 			leaf = workspace.getRightLeaf(false);
 			await leaf?.setViewState({ type: VIEW_TYPE_THOUGHT_STREAM_CONTROLS, active: true });
 		}
-		console.log(leaf)
+
+		if (this.settings.debugMode) {
+			console.log(leaf)
+		}
 
 		if (leaf) {
 			// "Reveal" the leaf in case it is in a collapsed sidebar

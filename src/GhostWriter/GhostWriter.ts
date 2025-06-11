@@ -4,7 +4,13 @@ import OpenAI from "openai";
 import {zodResponseFormat, zodTextFormat} from "openai/helpers/zod";
 import {z} from "zod";
 import {MarkdownView, Notice, TFile} from "obsidian";
-import {cleanFileName, getActiveFile, updateFrontMatterByFile} from "../utils";
+import {
+	cleanFileName,
+	getActiveFile,
+	getFrontMatterByFile,
+	parsePromptTemplate,
+	updateFrontMatterByFile
+} from "../utils";
 
 export type GhostWriterState = 'loading' | 'idle' | 'error';
 
@@ -95,10 +101,17 @@ export class GhostWriter {
 
 	async getDocument(src: string|TFile, config: Partial<GhostWriterPreset> = defaultConfig): Promise<Doc> {
 		this.$state.set('loading')
+		let data: Record<string, any> = config;
 
 		let thoughtsContent = '';
 		if (src instanceof TFile) {
 			thoughtsContent = await this.plugin.app.vault.cachedRead(src);
+			const frontmatter = await getFrontMatterByFile(this.plugin.app, src);
+			data = {
+				...frontmatter,
+				...config,
+				creativityDescription: CreativityOptions[config.creativity ?? 'balanced'],
+			}
 		} else {
 			thoughtsContent = src;
 		}
@@ -111,18 +124,7 @@ export class GhostWriter {
 			messages: [
 				{
 					role: 'system',
-					content: `
-          You are a professional Ghost Writer that writes the content draft for a ${config.contentType || 'text'}.
-          You are tasked to write a ${config.contentType || 'text'} based on the thoughts and ideas provided by the user.
-          These thoughts are a stream of consciousness that the user has provided - so they may not be well-structured or coherent.
-          Make fine tune the ${config.contentType || 'text'} for the target audience with the following description: "${config.audience || 'general audience'}".
-          Make sure to write a ${config.contentType || 'text'} that is and well-structured, coherent, 
-          follows a logical narrative thread and is first and foremost based on the inputs given by the user 
-          (don't add things unless asked for by the creativity level!).
-          Your goal is to create a ${config.contentType || 'text'} that incorporates the users thoughts.
-          Use the following creativity level: "${config.creativity || 'balanced'}" - ${CreativityOptions[config.creativity || 'balanced']}.
-          Generate a sensible title, the content, and a very brief description for the ${config.contentType || 'text'} (max. 250 Characters) and also up to 2-4 useful tags.
-          `,
+					content: parsePromptTemplate(this.plugin.settings.ghostWriterSystemPrompt, data),
 				},
 				{
 					role: 'user',

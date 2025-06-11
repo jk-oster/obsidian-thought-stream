@@ -3,7 +3,7 @@
 import axios from "axios";
 import ThoughtStream from "main";
 import { Notice, MarkdownView } from "obsidian";
-import { getBaseFileName } from "../utils";
+import {getBaseFileName, getFrontMatterByFile, parsePromptTemplate} from "../utils";
 import {Observable} from "../Observable";
 
 export type AudioHandlerState = 'processing' | 'idle';
@@ -12,7 +12,7 @@ export type TranscriptionResult = {
 	fileName: string;
 };
 
-export class AudioHandler {
+export class GhostWhisper {
 	private plugin: ThoughtStream;
 
 	public readonly $state: Observable<AudioHandlerState> = new Observable<AudioHandlerState>('idle');
@@ -47,12 +47,22 @@ export class AudioHandler {
 
 		this.$state.set('processing');
 
+		let data = {};
+		const activeFile = this.plugin.app.workspace.getActiveFile();
+		if (activeFile) {
+			const frontmatter = getFrontMatterByFile(this.plugin.app, activeFile);
+			data = {
+				...frontmatter,
+				fileName: getBaseFileName(activeFile.name),
+			}
+		}
+
 		const formData = new FormData();
 		formData.append("file", blob, fileName);
 		formData.append("model", this.plugin.settings.transcriptionModel);
 		formData.append("language", this.plugin.settings.language);
 		if (this.plugin.settings.transcriptionPrompt)
-			formData.append("prompt", this.plugin.settings.transcriptionPrompt);
+			formData.append("prompt", parsePromptTemplate(this.plugin.settings.transcriptionPrompt, data));
 
 		try {
 			// If the saveAudioFile setting is true, save the audio file

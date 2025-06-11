@@ -2,7 +2,7 @@ import ThoughtStream from "../../main";
 import {Observable} from "../Observable";
 import {zodTextFormat, zodResponseFormat} from "openai/helpers/zod";
 import {z} from "zod";
-import {getActiveFile} from "../utils";
+import {getActiveFile, getFrontMatterByFile, parsePromptTemplate} from "../utils";
 import {MarkdownView, Notice, TFile} from "obsidian";
 import {GhostWriterPreset} from "../GhostWriter/GhostWriter";
 import {RecorderModal} from "../GhostWhisper/RecorderModal";
@@ -13,14 +13,13 @@ export type GhostReaderConfig = {
 	maxQuestions: number,
 	model: string,
 	temperature: number,
-	audience: string,
+	audience?: string,
 };
 
 const defaultConfig: GhostReaderConfig = {
 	maxQuestions: 10,
 	model: "gpt-4o-mini",
 	temperature: 0.7,
-	audience: "general",
 }
 
 const QuestionsObject = z.object({
@@ -126,7 +125,11 @@ export class GhostReader {
 			}
 			return questions;
 		} else {
-			new Notice("No questions found in frontmatter.");
+			if (this.plugin.settings.debugMode) {
+				new Notice("No questions found in frontmatter.");
+				console.log(`No questions found in frontmatter for file: ${activeFile.path}`);
+			}
+			this.$questions.value = [];
 			return [];
 		}
 	}
@@ -248,10 +251,16 @@ export class GhostReader {
 	async getQuestions(src: string|TFile, config: Partial<GhostReaderConfig> = defaultConfig): Promise<string[]> {
 		this.$state.set('loading')
 		this.$error.set(null);
+		let data: Record<string, any> = config;
 
 		let thoughtsContent = '';
 		if (src instanceof TFile) {
 			thoughtsContent = await this.plugin.app.vault.read(src);
+			const frontmatter = await getFrontMatterByFile(this.plugin.app, src);
+			data = {
+				...frontmatter,
+				...config,
+			};
 		} else {
 			thoughtsContent = src;
 		}
@@ -259,32 +268,12 @@ export class GhostReader {
 		const client = this.plugin.aiClient.client;
 		const response = await client.chat.completions.create({
 			model: config.model || "gpt-4o-mini",
-			temperature: config.temperature || 0.7,
+			temperature: config.temperature || 1,
 			response_format:  zodResponseFormat(QuestionsObject, 'questions'),
 			messages: [
 				{
 					role: 'system',
-					content: `
-          You are a helpful Ghost Reader that generates insightful and 
-          thought-provoking questions to further 
-          lead the thoughts of the user to explore the topic at hand further 
-          based on the stream of thoughts provided by the user.
-          Put yourself in the shoes of a curious reader who wants to understand 
-          the topic better of the following audience: "${config.audience || 'general audience'}"
-          and generate questions that are relevant to the content provided.
-          Make the questions concise, clear, and engaging.
-          Do not repeat the content of the thoughts, but rather generate questions
-          that encourage deeper thinking and exploration of the topic.
-          Engage the user with questions that are open-ended and thought-provoking.
-          You can also ask for clarifications or elaborations on specific points if necessary.
-          You can engage the user directly by asking them to reflect on their thoughts.
-          Do not include any additional text or explanations, just the questions.
-          Ask questions that provide value to the user and also to the audience.
-          What might the audience (${config.audience ?? 'general audience'}) want to know about the topic?
-          You can engage with the user by asking them to reflect on their thoughts.
-          Make them direct questions, directly address the user with "you" in your questions you can use for example: 
-          "What do you...", "How do you feel about...", "Why do you...", "What makes,...".
-          `,
+					content: parsePromptTemplate(this.plugin.settings.ghostReaderSystemPrompt, data),
 				},
 				{
 					role: 'user',

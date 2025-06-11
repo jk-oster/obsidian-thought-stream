@@ -3,7 +3,7 @@ import ThoughtStream from "main";
 import { Notice, MarkdownView } from "obsidian";
 import { getBaseFileName } from "../utils";
 import {Observable} from "../Observable";
-import {TranscriptionResult} from "./AudioHandler";
+import {TranscriptionResult} from "./GhostWhisper";
 
 
 export class TranscriptionHandler {

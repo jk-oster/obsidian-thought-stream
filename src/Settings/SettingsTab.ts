@@ -28,7 +28,7 @@ export class SettingsTab extends PluginSettingTab {
 		this.createApiKeySetting();
 		this.createApiUrlSetting();
 		this.createModelSetting();
-		this.createPromptSetting();
+		this.createTranscriptionPromptSetting();
 		this.createLanguageSetting();
 		this.createSaveAudioFileToggleSetting();
 		this.createSaveAudioFilePathSetting();
@@ -41,12 +41,14 @@ export class SettingsTab extends PluginSettingTab {
 		this.createCompletionApiUrlSetting();
 		this.createCompletionModelSetting();
 		this.saveDraftsFilePathSetting();
+		this.ghostWriterSystemPromptSetting();
 
 		this.createHeader('Ghost Reader');
 		this.autoReadActiveFileToggleSetting();
 		this.createAutoReadActiveFileIncludeSetting();
 		this.createAutoReadActiveFileExcludeSetting();
 		this.createMinimumCharacterCountSetting();
+		this.ghostReaderSystemPromptSetting();
 
 		this.createHeader('Development');
 		this.createDebugModeToggleSetting();
@@ -77,19 +79,13 @@ export class SettingsTab extends PluginSettingTab {
 				cb.setCta();
 				cb.setButtonText('Docs');
 				cb.onClick(() => {
-					openURL('https://github.com/jk-oster/obsidian-thought-stream');
+					openURL('https://jk-oster.github.io/obsidian-thought-stream/');
 				});
 			})
 			.addButton(cb => {
 				cb.setButtonText('Open FAQ');
 				cb.onClick(() => {
-					openURL('https://github.com/jk-oster/obsidian-thought-stream');
-				});
-			})
-			.addButton(cb => {
-				cb.setButtonText('GitHub');
-				cb.onClick(() => {
-					openURL('https://github.com/jk-oster/obsidian-thought-stream');
+					openURL('https://jk-oster.github.io/obsidian-thought-stream/faq.html');
 				});
 			})
 			.addButton(cb => {
@@ -165,17 +161,35 @@ export class SettingsTab extends PluginSettingTab {
 		);
 	}
 
-	private createPromptSetting(): void {
-		this.createTextSetting(
-			"Prompt",
-			"Optional: Add words with their correct spellings to help with transcription. Make sure it matches the chosen language.",
-			"Example: ZyntriQix, Digique Plus, CynapseFive",
-			this.plugin.settings.transcriptionPrompt,
-			async (value) => {
-				this.plugin.settings.transcriptionPrompt = value;
-				await this.settingsManager.saveSettings(this.plugin.settings);
-			}
-		);
+	private createTranscriptionPromptSetting(): void {
+		// this.createTextSetting(
+		// 	"Prompt",
+		// 	"Optional: Add words with their correct spellings to help with transcription. Make sure it matches the chosen language.",
+		// 	"Example: ZyntriQix, Digique Plus, CynapseFive",
+		// 	this.plugin.settings.transcriptionPrompt,
+		// 	async (value) => {
+		// 		this.plugin.settings.transcriptionPrompt = value;
+		// 		await this.settingsManager.saveSettings(this.plugin.settings);
+		// 	}
+		// );
+
+		new Setting(this.containerEl)
+			.setClass('setting-item-textarea-full-width')
+			.setName("Transcription Prompt")
+			.setDesc(
+				"Optional: Add words with their correct spellings to help with transcription. Make sure it matches the chosen language."
+			)
+			.addTextArea((text) => {
+				text
+					.setPlaceholder("Example: ZyntriQix, Digique Plus, CynapseFive")
+					.setValue(this.plugin.settings.transcriptionPrompt)
+					.onChange(async (value) => {
+						this.plugin.settings.transcriptionPrompt = value;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+			});
 	}
 
 	private createLanguageSetting(): void {
@@ -372,6 +386,26 @@ export class SettingsTab extends PluginSettingTab {
 		);
 	}
 
+	private ghostWriterSystemPromptSetting(): void {
+		new Setting(this.containerEl)
+			.setClass('setting-item-textarea-full-width')
+			.setName("Ghost Writer System Prompt")
+			.setDesc(
+				"Customize the system prompt for the Ghost Writer. Use {{<frontmatter-property-name>}} to insert file meta data."
+			)
+			.addTextArea((text) => {
+				text
+					.setPlaceholder("Example: You are a professional Ghost Writer...")
+					.setValue(this.plugin.settings.ghostWriterSystemPrompt)
+					.onChange(async (value) => {
+						this.plugin.settings.ghostWriterSystemPrompt = value;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
+					});
+			});
+	}
+
 	private createAutoReadActiveFileExcludeSetting(): void {
 		new Setting(this.containerEl)
 			.setName("Exclude folders from auto-read")
@@ -452,6 +486,26 @@ export class SettingsTab extends PluginSettingTab {
 								this.plugin.settings
 							);
 						}
+					});
+			});
+	}
+
+	private ghostReaderSystemPromptSetting(): void {
+		new Setting(this.containerEl)
+			.setClass('setting-item-textarea-full-width')
+			.setName("Ghost Reader System Prompt")
+			.setDesc(
+				"Customize the system prompt for the Ghost Reader. Use {{<frontmatter-property-name>}} to insert file meta data."
+			)
+			.addTextArea((text) => {
+				text
+					.setPlaceholder("Example: You are a helpful Ghost Reader...")
+					.setValue(this.plugin.settings.ghostReaderSystemPrompt)
+					.onChange(async (value) => {
+						this.plugin.settings.ghostReaderSystemPrompt = value;
+						await this.settingsManager.saveSettings(
+							this.plugin.settings
+						);
 					});
 			});
 	}

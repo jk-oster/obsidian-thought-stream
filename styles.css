@@ -73,7 +73,7 @@
 }
 
 .question-text {
-	font-weight: bold;
+	/*font-weight: bold;*/
 	padding-bottom: 5px;
 }
 
@@ -87,6 +87,7 @@
 	cursor: pointer;
 }
 
+.setting-item-textarea-full-width.setting-item,
 .thought-stream-modal .setting-item {
 
 	&:has(textarea) {

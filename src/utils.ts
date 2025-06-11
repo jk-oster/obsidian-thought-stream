@@ -151,3 +151,9 @@ export function resolveTFile(app: App, file_str: string): TFile {
 
 	return file;
 }
+
+export function parsePromptTemplate(template: string, data: Record<string, any>): string {
+	return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+		return data[key] !== undefined ? data[key] : match;
+	});
+}
