@@ -7,6 +7,9 @@ editLink: true
 
 # Getting Started with Thought Stream
 
+> [!warning] Work in Progress 🏗️
+> This page is a work in progress and does not include all the features yet! In case you have questions or problems that are not covered in this guide check out [FAQ & Troubleshooting](./faq.md).
+
 1. This plugin can be installed from "Community Plugins" inside Obsidian or via the [BRAT Plugin](obsidian://show-plugin?id=obsidian42-brat).
 2. For this plugin to work, you will need to provide your OpenAI API key (or an OpenAI compatible API + key).
 3. See the Settings section of this README file for more information.
