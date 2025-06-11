@@ -202,8 +202,10 @@ export class GhostReader {
 		const autoReadActiveFileExclude = this.plugin.settings.autoReadActiveFileExclude;
 		const autoReadActiveFileInclude = this.plugin.settings.autoReadActiveFileInclude;
 
-		if (!autoReadActiveFile && this.plugin.settings.debugMode) {
-			new Notice("Auto-read active file is disabled in settings.");
+		if (!autoReadActiveFile) {
+			if (this.plugin.settings.debugMode) {
+				new Notice("Auto-read active file is disabled in settings.");
+			}
 			return;
 		}
 
