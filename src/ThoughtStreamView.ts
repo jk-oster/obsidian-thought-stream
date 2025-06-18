@@ -61,7 +61,7 @@ export class ThoughtStreamView extends ItemView {
 		this.startButton = new ButtonComponent(buttonGroupEl);
 		this.startButton
 			.setButtonText(" Record")
-			.setTooltip("Start recording audio")
+			.setTooltip("Start recording audio for transcription")
 			.setIcon("mic")
 			.onClick(async () => {
 				await this.plugin.controller.startRecording();
@@ -84,7 +84,7 @@ export class ThoughtStreamView extends ItemView {
 		this.stopButton = new ButtonComponent(buttonGroupEl);
 		this.stopButton
 			.setButtonText(" Stop")
-			.setTooltip("Stop recording and process audio")
+			.setTooltip("Stop recording and transcribe audio")
 			.setDisabled(this.plugin.recorder.getRecordingState() === "inactive" || !this.plugin.recorder.getRecordingState())
 			.setIcon("square")
 			.onClick(async () => {
@@ -148,12 +148,13 @@ export class ThoughtStreamView extends ItemView {
 		this.startButton.setDisabled(
 			recorderState === "recording" || recorderState === "paused"
 		);
-		this.pauseButton.setDisabled(recorderState === "inactive");
-		this.stopButton.setDisabled(recorderState === "inactive");
+		this.pauseButton.setDisabled(recorderState === "inactive" || !recorderState);
+		this.stopButton.setDisabled(recorderState === "inactive" || !recorderState);
 
 		this.pauseButton.setButtonText(
 			recorderState === "paused" ? " Resume" : " Pause"
-		);this.pauseButton.setIcon(
+		);
+		this.pauseButton.setIcon(
 			recorderState === "paused" ? "play" : "pause"
 		);
 	}

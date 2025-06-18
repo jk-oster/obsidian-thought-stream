@@ -42,13 +42,13 @@ export const CreativityOptions: Record<Creativity, string> = {
 const getTemperatureBasedOnCreativity = (creativity: Creativity): number => {
 	switch (creativity) {
 		case 'precise':
-			return 0.3;
-		case 'minimal':
 			return 0.5;
+		case 'minimal':
+			return 0.4;
 		case 'balanced':
 			return 0.7;
 		case 'enhanced':
-			return 0.9;
+			return 0.8;
 		case 'imaginative':
 			return 1.0;
 		default:

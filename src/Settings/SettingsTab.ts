@@ -391,7 +391,7 @@ export class SettingsTab extends PluginSettingTab {
 			.setClass('setting-item-textarea-full-width')
 			.setName("Ghost Writer System Prompt")
 			.setDesc(
-				"Customize the system prompt for the Ghost Writer. Use {{<frontmatter-property-name>}} to insert file meta data."
+				"Customize the system prompt for the Ghost Writer. Use {{<frontmatter-property-name>}} to insert file meta data. Addidionally, you can use {{contentType}}, {{audience}}, {{creativity}}, and {{creativityDescription}} to insert the content type, target audience, and creativity level respectively."
 			)
 			.addTextArea((text) => {
 				text

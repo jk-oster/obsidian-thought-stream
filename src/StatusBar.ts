@@ -65,17 +65,20 @@ export class StatusBar {
 				case 'processing':
 					this.statusBarItem.textContent = "GhostWhisper processing audio...";
 					this.statusBarIcon.style.color = "orange";
+					this.statusBarIcon.addClass('thought-stream-status-bar-icon');
 					setIcon(this.statusBarIcon, "sync");
 					break;
 				case 'paused':
 					this.statusBarItem.textContent = "GhostWhisper paused";
 					this.statusBarIcon.style.color = "green";
+					this.statusBarIcon.addClass('thought-stream-status-bar-icon');
 					setIcon(this.statusBarIcon, "play");
 					break;
 				case 'inactive':
 				default:
 					this.statusBarItem.textContent = "GhostWhisper idle";
 					this.statusBarIcon.style.color = "green";
+					this.statusBarIcon.addClass('thought-stream-status-bar-icon');
 					setIcon(this.statusBarIcon, "mic");
 					break;
 			}
@@ -85,6 +88,7 @@ export class StatusBar {
 	updatePauseIcon(state: StatusBarState = this.$state.value) {
 		this.statusBarPauseIcon?.remove();
 		this.statusBarPauseIcon = null;
+
 		if (state === 'recording') {
 			this.statusBarPauseIcon = this.plugin.addStatusBarItem();
 			this.statusBarPauseIcon.addClass('thought-stream-status-bar-icon');

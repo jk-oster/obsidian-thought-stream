@@ -63,8 +63,9 @@ export default class ThoughtStream extends Plugin {
 				await this.ghostReader.autoGenerateForActiveFile();
 			}
 		})
-		const editorChange = this.app.workspace.on('editor-change', (editor, info) => {
+		const editorChange = this.app.workspace.on('editor-change', async (editor, info) => {
 			if (info.file) {
+				// await this.ghostReader.autoReadActiveFileOnEditorChange();
 				console.log('editor change', info.file);
 			}
 		})
@@ -133,13 +134,19 @@ export default class ThoughtStream extends Plugin {
 		this.addCommand({
 			id: "recording-controls",
 			icon: "mic",
-			name: "Open recorder controls (and Start recording)",
+			name: "Open recorder controls and start recording",
 			callback: async () => {
 				if (this.recorder.getRecordingState() === 'inactive' || !this.recorder.getRecordingState()) {
 					this.controller.startRecording();
 				}
 				this.getRecorderModal().open();
-			}
+			},
+			hotkeys: [
+				{
+					modifiers: ["Ctrl"],
+					key: "Q",
+				},
+			],
 		});
 
 		this.addCommand({
@@ -170,19 +177,32 @@ export default class ThoughtStream extends Plugin {
 				// Programmatically open the file dialog
 				fileInput.click();
 			},
+			hotkeys: [
+				{
+					modifiers: ["Ctrl", "Shift"],
+					key: "Q",
+				},
+			],
 		});
 
 		this.addCommand({
 			id: "create-content",
 			icon: "wand-sparkles",
-			name: "Create Content",
+			name: "Create/generate content based on active file",
 			callback: () => {
 				new GhostWriterModal(this).open();
 			},
 		});
 		this.addCommand({
 			id: "create-content-preset",
-			name: "Create Content Preset",
+			name: "Create content preset",
+			callback: () => {
+				new CreatePresetModal(this).open();
+			},
+		});
+		this.addCommand({
+			id: "open-ghost-reader-view",
+			name: "Open Thought Stream Ghosts view",
 			callback: () => {
 				new CreatePresetModal(this).open();
 			},

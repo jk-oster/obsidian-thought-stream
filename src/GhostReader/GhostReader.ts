@@ -1,11 +1,9 @@
 import ThoughtStream from "../../main";
 import {Observable} from "../Observable";
-import {zodTextFormat, zodResponseFormat} from "openai/helpers/zod";
+import {zodResponseFormat} from "openai/helpers/zod";
 import {z} from "zod";
 import {getActiveFile, getFrontMatterByFile, parsePromptTemplate} from "../utils";
 import {MarkdownView, Notice, TFile} from "obsidian";
-import {GhostWriterPreset} from "../GhostWriter/GhostWriter";
-import {RecorderModal} from "../GhostWhisper/RecorderModal";
 
 export type GhostReaderState = 'loading' | 'idle' | 'error';
 
@@ -32,6 +30,7 @@ export class GhostReader {
 	public readonly $state = new Observable<GhostReaderState>('idle');
 	public readonly $error = new Observable<string | null>(null);
 	public readonly $questions = new Observable<string[]>([]);
+	private readonly $headings = new Observable<string[]>([]);
 
 	constructor(plugin: ThoughtStream) {
 		this.plugin = plugin;
@@ -198,34 +197,7 @@ export class GhostReader {
 			return;
 		}
 
-		const autoReadActiveFile = this.plugin.settings.autoReadActiveFile;
-		const autoReadActiveFileExclude = this.plugin.settings.autoReadActiveFileExclude;
-		const autoReadActiveFileInclude = this.plugin.settings.autoReadActiveFileInclude;
-
-		if (!autoReadActiveFile) {
-			if (this.plugin.settings.debugMode) {
-				new Notice("Auto-read active file is disabled in settings.");
-			}
-			return;
-		}
-
-		if (file.stat.size < this.plugin.settings.autoReadMinimumCharacterCount) {
-			if (this.plugin.settings.debugMode) {
-				new Notice(`File is too short for auto-generation: ${file.stat.size} characters.`);
-			}
-			return;
-		}
-
-		if (autoReadActiveFileExclude.length > 0 && autoReadActiveFileExclude.some(excludePath => file.path.includes(excludePath))) {
-			if (this.plugin.settings.debugMode) {
-				new Notice(`Skipping auto-generation for file: ${file.path} due to exclusion pattern.`);
-			}
-			return;
-		}
-		if (autoReadActiveFileInclude.length > 0 && autoReadActiveFileInclude.some(includePath => !file.path.includes(includePath))) {
-			if (this.plugin.settings.debugMode) {
-				new Notice(`Skipping auto-generation for file: ${file.path} due to inclusion pattern.`);
-			}
+		if (!this.allowAutoReadFile(file)) {
 			return;
 		}
 
@@ -234,6 +206,79 @@ export class GhostReader {
 		}
 
 		await this.getQuestions(file, config);
+	}
+
+	allowAutoReadFile(file: TFile): boolean {
+		const autoReadActiveFile = this.plugin.settings.autoReadActiveFile;
+		const autoReadActiveFileExclude = this.plugin.settings.autoReadActiveFileExclude;
+		const autoReadActiveFileInclude = this.plugin.settings.autoReadActiveFileInclude;
+
+		if (!autoReadActiveFile) {
+			if (this.plugin.settings.debugMode) {
+				new Notice("Auto-read active file is disabled in settings.");
+			}
+			return false;
+		}
+
+		if (file.stat.size < this.plugin.settings.autoReadMinimumCharacterCount) {
+			if (this.plugin.settings.debugMode) {
+				new Notice(`File is too short for auto-generation: ${file.stat.size} characters.`);
+			}
+			return false;
+		}
+
+		if (autoReadActiveFileExclude.length > 0 && autoReadActiveFileExclude.some(excludePath => file.path.includes(excludePath))) {
+			if (this.plugin.settings.debugMode) {
+				new Notice(`Skipping auto-generation for file: ${file.path} due to exclusion pattern.`);
+			}
+			return false;
+		}
+		if (autoReadActiveFileInclude.length > 0 && autoReadActiveFileInclude.some(includePath => !file.path.includes(includePath))) {
+			if (this.plugin.settings.debugMode) {
+				new Notice(`Skipping auto-generation for file: ${file.path} due to inclusion pattern.`);
+			}
+			return false;
+		}
+
+		return true;
+	}
+
+	async autoReadActiveFileOnEditorChange(config: Partial<GhostReaderConfig> = defaultConfig): Promise<void> {
+		const activeFile = getActiveFile(this.plugin.app);
+		if (!activeFile) {
+			new Notice("No active file found to auto-read on editor change.");
+			return;
+		}
+
+		if (!this.allowAutoReadFile(activeFile)) {
+			return;
+		}
+
+		const content = await this.plugin.app.vault.read(activeFile);
+		const headings = content.match(/^(#{1,6})\s(.+)$/gm);
+		const oldHeadings = this.$headings.value;
+
+		if (headings) {
+			this.$headings.value = headings.map(h => h.replace(/^(#{1,6})\s/, '').trim());
+		} else {
+			this.$headings.value = [];
+			if (this.plugin.settings.debugMode) {
+				new Notice(`No headings found in file: ${activeFile.path}`);
+			}
+		}
+
+		if (this.$headings.value.length === oldHeadings.length) {
+			if (this.plugin.settings.debugMode) {
+				new Notice(`No new headings found in file: ${activeFile.path} - skipping auto-generation.`);
+			}
+			return;
+		}
+
+		if (this.plugin.settings.debugMode) {
+			new Notice(`Auto-reading active file on editor change: ${activeFile.path}`);
+		}
+
+		await this.generateForActiveFile(config);
 	}
 
 	async generateForActiveFile(config: Partial<GhostReaderConfig> = defaultConfig): Promise<void> {

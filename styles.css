@@ -83,8 +83,8 @@
 	border: 2px solid;
 }
 
-.thought-stream-status-bar-icon {
-	cursor: pointer;
+.status-bar .status-bar-item.thought-stream-status-bar-icon {
+	cursor: pointer !important;
 }
 
 .setting-item-textarea-full-width.setting-item,
