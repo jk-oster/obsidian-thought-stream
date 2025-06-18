@@ -14,6 +14,15 @@ editLink: true
 
 ## How can I troubleshoot connection problems between Thought Stream and my LLM-Provider?
 
+You can troubleshoot connection problems by following these steps:
+1. Check your API key and ensure it is correctly entered in the Thought Stream settings.
+2. Check your API URL and ensure it is correctly entered in the Thought Stream settings.
+3. Ensure that you have a stable internet connection.
+4. Check the API status of your LLM-Provider to see if there are any ongoing issues.
+5. If you are using a self-hosted LLM, ensure that it is running and accessible from your network.
+6. Turn on the developer mode in the plugin settings and check the notices in the plugin interface for any error messages or warnings that might indicate the source of the problem.
+7. If the problem persists, check the developer console in Obsidian for any error messages related to Thought Stream. You can open the developer console by pressing `Ctrl + Shift + I` (or `Cmd + Option + I` on Mac) and navigating to the "Console" tab.
+8. If you still can't resolve the issue, consider reaching out for help by opening an [issue on GitHub](https://github.com/jk-oster/obsidian-thought-stream/issues)
 
 ## How do I test the latest extension version from GitHub?
 
@@ -36,13 +45,15 @@ Thought Stream usually reads only the currently active note execpt if you explic
 
 You can include or exclude certain notes from being processed by Thought Stream by using `inlcude` and `exlude` settings of the plugin.
 
-## How does Thought Stream handle sensitive data?
+## How does Thought Stream handle my note data?
 
 Thought Streams sends note data to the configured LLM-Provider for processing.
 The LLM-Provider might store the data according to its own privacy policy.
 The Thought Stream plugin has no control over how the LLM-Provider handles the data.
 
-It does not store or log any sensitive data remotely.
+You can also configure Thought Stream to use a self-hosted / local LLM compatible with OpenAi API. This way you can ensure that no sensitive data is sent to a third-party service.
+
+The plugin itself does not store or log any data outside your vault.
 All the data storage and processing aside from transcription, question generation and content generation happens locally in your Obsidian vault.
 
 ## Which LLM-Providers are supported?
@@ -55,7 +66,7 @@ Currently, Thought Stream supports all OpenAI-API-compatible providers, includin
 
 ## How do I report a bug or request a feature?
 
-You can report bugs or request features by opening an issue on the [GitHub repository]()
+You can report bugs or request features by opening an issue on the [GitHub repository](https://github.com/jk-oster/obsidian-thought-stream/issues)
 or by contacting me directly through the [contact form](https://jakobosterberger.com/contact).
 
 ## How do I get an API key for my LLM-Provider?
@@ -66,18 +77,45 @@ You can get an API key for your LLM-Provider by following these steps:
 3. Navigate to the API section of the website.
 4. Follow the instructions to create a new API key.
 
-## How do I configure Thought Stream to use my LLM-Provider?
+## How do I configure Thought Stream to use my (local) LLM-Provider?
+
 You can configure Thought Stream to use your LLM-Provider by following these steps:
 1. Open the Obsidian settings.
 2. Navigate to the "Thought Stream" plugin settings.
-3. Enter your custom API url and api key.
+3. Enter your custom API url and API key.
 4. Select the model you want to use.
 5. Select the language you want to use for the transcription.
 
-## How do I use Thought Stream to transcribe audio files?
+## How do I use Thought Stream to transcribe existing audio files?
 
 You can use Thought Stream to transcribe audio files by following these steps:
 1. Open the command palette with `Ctrl/Cmd + P`.
 2. Search for "Transcribe Audio File" and select it.
 3. A file dialog will appear. Choose the audio file you want to transcribe.
 4. The plugin will transcribe the selected file. The output will be saved according to your settings, either in a new note or at the cursor position in the current note.
+
+## How do I use Thought Stream to generate content?
+
+You can use Thought Stream to generate content by following these steps:
+1. using the command palette:
+	- Open the command palette with `Ctrl/Cmd + P`.
+	- Search for "Generate Content" and select it.
+2. using the Thought Stream interface:
+   - Open the Thought Stream interface by e.g., clicking on the ribbon icon. 
+   - Click the "Generate Content" Button.
+3. A dialog will appear. Choose a preset or enter a configuration for the content you want to generate.
+4. Click the "Generate" button. The plugin will generate the content based on your configuration and create a new note.
+
+## How do I use Thought Stream to generate questions?
+
+You can use Thought Stream to generate questions by following these steps:
+1. Open the Thought Stream interface by e.g., clicking on the ribbon icon.
+2. Click the "Generate Questions" Button.
+
+> [!info] Tip 💡
+> If you want, you can configure the plugin to automatically generate questions for each note.
+> You can do this by enabling the "Auto read active file" setting in the Thought Stream settings.
+
+> [!warning] Caution 💸
+> Be aware that this will automatically send requests to your LLM-Provider for each note you open, 
+> which might incur costs depending on your provider's pricing model.
