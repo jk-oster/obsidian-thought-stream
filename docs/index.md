@@ -8,7 +8,7 @@ description: Your personal Ghost-Reader for exploring ideas, Ghost-Writer for cr
 hero:
   name: "Thought Stream"
 #  text: "Explore Express Transcribe Create"
-  tagline: "Explore your ideas, express your thoughts and create useful content effortlessly."
+  tagline: "Explore your ideas, express your thoughts, and create useful content effortlessly."
   image:
     src: "/ghost-reader-logo.png"
     alt: "VitePress"
@@ -24,16 +24,15 @@ hero:
       link: /feature-guide
 
 features:
+  - title: Ghost-Whisper
+    icon: 🎙️
+    details: Simply voice your ideas and thoughts without the need to type them out.
   - title: Ghost-Reader
     icon: 👓
     details: Receive insightful questions on-the-fly to explore your ideas further and overcome writers block.
   - title: Ghost-Writer
     icon: 🖊️
-    details: Automatically organize your thoughts and ideas easily turn them into useful output and draft content. 
-  - title: Ghost-Whisper
-    icon: 🎙️
-    details: Simply voice your ideas and thoughts without the need to type them out.
-
+    details: Automatically organize your thoughts and ideas easily turn them into useful output and draft content.
 ---
 
 <video src="/demo.mp4" controls preload="metadata" loop></video>

@@ -2,6 +2,8 @@
 [![Deploy Docs](https://github.com/jk-oster/obsidian-thought-stream/actions/workflows/deploy-docs.yaml/badge.svg)](https://github.com/jk-oster/obsidian-thought-stream/actions/workflows/deploy-docs.yaml)
 [![Release Obsidian plugin](https://github.com/jk-oster/obsidian-thought-stream/actions/workflows/release.yaml/badge.svg)](https://github.com/jk-oster/obsidian-thought-stream/actions/workflows/release.yaml)
 
+> Explore your ideas, express your thoughts, and create useful content effortlessly.
+
 Obsidian Thought Stream is a plugin that effortlessly turns your speech into written notes. 
 Speak your mind, and let [Whisper](https://openai.com/research/whisper) from OpenAI do the rest!
 
