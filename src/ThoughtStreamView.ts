@@ -61,7 +61,7 @@ export class ThoughtStreamView extends ItemView {
 		this.startButton = new ButtonComponent(buttonGroupEl);
 		this.startButton
 			.setButtonText(" Record")
-			.setTooltip("Start recording audio for transcription")
+			.setTooltip("GhostWhisper: Start recording audio for transcription")
 			.setIcon("mic")
 			.onClick(async () => {
 				await this.plugin.controller.startRecording();
@@ -95,7 +95,7 @@ export class ThoughtStreamView extends ItemView {
 		this.generateButton = new ButtonComponent(buttonGroupEl2);
 		this.generateButton
 			.setButtonText(" GhostWriter")
-			.setTooltip("GhostWriter. Generate content from currently active file.")
+			.setTooltip("GhostWriter: Generate content from currently active file.")
 			.setIcon("wand")
 			.onClick(async () => {
 				new GhostWriterModal(this.plugin).open();

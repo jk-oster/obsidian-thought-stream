@@ -44,7 +44,7 @@ export default class ThoughtStream extends Plugin {
 		this.ghostReader = new GhostReader(this);
 		this.controller = new Controller(this);
 
-		this.addRibbonIcon("mic", "Open recording controls modal", (evt) => {
+		this.addRibbonIcon("mic", "Start recording and open recorder controls", (evt) => {
 			this.getRecorderModal().open();
 			this.controller.startRecording();
 		});
@@ -134,7 +134,7 @@ export default class ThoughtStream extends Plugin {
 		this.addCommand({
 			id: "recording-controls",
 			icon: "mic",
-			name: "Open recorder controls and start recording",
+			name: "Start recording and open recorder controls",
 			callback: async () => {
 				if (this.recorder.getRecordingState() === 'inactive' || !this.recorder.getRecordingState()) {
 					this.controller.startRecording();

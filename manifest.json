@@ -3,7 +3,7 @@
   "name": "Thought Stream",
   "version": "0.2.0",
   "minAppVersion": "0.15.0",
-  "description": "Record your thoughts Ghost-Whisper Speech-to-text with, explore ideas with help of your personal Ghost-Reader and create content based on your thoughts with Ghost-Writer.",
+  "description": "Record and transcribe your thoughts with Ghost-Whisper Speech-to-text. Explore ideas and overcome writer's block with help of your personal Ghost-Reader. Effortlessly create content based on your insights and presets with Ghost-Writer.",
   "author": "Jakob Osterberger",
   "authorUrl": "https://jakobosterberger.com",
   "fundingUrl": "https://ko-fi.com/jakobosterberger",

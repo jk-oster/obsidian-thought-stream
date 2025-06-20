@@ -85,6 +85,10 @@
 
 .status-bar .status-bar-item.thought-stream-status-bar-icon {
 	cursor: pointer !important;
+
+	&:hover {
+		background-color: var(--background-modifier-hover);
+	}
 }
 
 .setting-item-textarea-full-width.setting-item,
