@@ -15,7 +15,7 @@ editLink: true
 1. This plugin can be installed from "Community Plugins" inside Obsidian or via the [BRAT Plugin](obsidian://show-plugin?id=obsidian42-brat).
 2. For this plugin to work, you will need to provide your OpenAI API key (or an OpenAI compatible API + key).
 
-# 🎯 How to Use
+## How to Use
 
 > For further explanation of using this plugin, check out the article ["Speech-to-text in Obsidian using OpenAI Whisper Service"](https://tfthacker.medium.com/speech-to-text-in-obsidian-using-openai-whisper-service-7b2843bf8d64) by [TfT Hacker](https://twitter.com/tfthacker)
 
