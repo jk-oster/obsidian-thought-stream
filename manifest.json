@@ -1,6 +1,6 @@
 {
-  "id": "obsidian-thought-stream-ghost",
-  "name": "Thought Stream",
+  "id": "whisper-buddy",
+  "name": "Whisper Buddy",
   "version": "0.2.0",
   "minAppVersion": "0.15.0",
   "description": "Record and transcribe your thoughts with Ghost-Whisper Speech-to-text. Explore ideas and overcome writer's block with help of your personal Ghost-Reader. Effortlessly create content based on your insights and presets with Ghost-Writer.",

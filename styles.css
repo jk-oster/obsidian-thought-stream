@@ -83,7 +83,7 @@
 	border: 2px solid;
 }
 
-.status-bar .status-bar-item.thought-stream-status-bar-icon {
+.status-bar .status-bar-item.whisper-buddy-status-bar-icon {
 	cursor: pointer !important;
 
 	&:hover {
@@ -92,7 +92,7 @@
 }
 
 .setting-item-textarea-full-width.setting-item,
-.thought-stream-modal .setting-item {
+.whisper-buddy-modal .setting-item {
 
 	&:has(textarea) {
 		display: flex;
@@ -119,7 +119,7 @@
 	}
 }
 
-.answer-modal.thought-stream-modal .setting-item {
+.answer-modal.whisper-buddy-modal .setting-item {
 	.setting-item-control {
 		textarea {
 			height: 10rem;
@@ -133,4 +133,8 @@
 
 .settings-search {
 	width: calc(100% - 20px);
+}
+
+.whisper-buddy-btn {
+	cursor: pointer !important;
 }

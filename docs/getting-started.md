@@ -1,11 +1,11 @@
 ---
 title: Getting Started
-description: Start using Thought Stream in just a minute and learn how to use its powerful features.
+description: Start using Whisper Buddy in just a minute and learn how to use its powerful features.
 
 editLink: true
 ---
 
-# Getting Started with Thought Stream
+# Getting Started with Whisper Buddy
 
 > [!warning] Work in Progress 🏗️
 > This page is a work in progress and does not include all the features yet! In case you have questions or problems that are not covered in this guide check out [FAQ & Troubleshooting](./faq.md).

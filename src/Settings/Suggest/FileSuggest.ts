@@ -2,7 +2,7 @@
 
 import { TAbstractFile, TFile } from "obsidian";
 import { TextInputSuggest } from "./Suggest";
-import ThoughtStream from "main";
+import WhisperBuddy from "main";
 import {getTFilesFromFolder} from "../../utils";
 
 export enum FileSuggestMode {
@@ -13,7 +13,7 @@ export enum FileSuggestMode {
 export class FileSuggest extends TextInputSuggest<TFile> {
 	constructor(
 		public inputEl: HTMLInputElement,
-		private plugin: ThoughtStream,
+		private plugin: WhisperBuddy,
 		private mode: FileSuggestMode
 	) {
 		super(plugin.app, inputEl);

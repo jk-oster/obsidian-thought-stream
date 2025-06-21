@@ -4,7 +4,7 @@
 
 > Explore your ideas, express your thoughts, and create useful content effortlessly.
 
-Obsidian Thought Stream is a plugin that effortlessly turns your speech into written notes. 
+Obsidian Whisper Buddy is a plugin that effortlessly turns your speech into written notes. 
 Speak your mind, and let [Whisper](https://openai.com/research/whisper) from OpenAI do the rest!
 
 ## Features
@@ -84,7 +84,7 @@ If you want to install this plugin manually, use the following steps:
 
 1. Download `manifest.json`, `main.js`, `styles.css` from the [GitHub repository](https://github.com/jk-oster/obsidian-thought-stream/releases) into the `plugins/obsidian-thought-stream` folder within your Obsidian vault.
 2. Click on `Reload plugins` button inside `Settings > Community plugins`.
-3. Locate the "Thought Stream" plugin and enable it.
+3. Locate the "Whisper Buddy" plugin and enable it.
 4. In the plugin settings include your OpenAI API key.
 
 ## 🏆 Credits
@@ -97,7 +97,7 @@ Thanks a lot, his efforts laid the foundation of this plugin and also served as 
 
 Are you finding value in this plugin? Great! You can fuel my coding sessions and share your appreciation by buying me a coffee [here](https://ko-fi.com/jakobosterberger).
 
-Help others discover the magic of the Obsidian Thought Stream Plugin! I'd be thrilled if you could share your experiences on Twitter, Reddit, or your preferred social media platform!
+Help others discover the magic of the Obsidian Whisper Buddy Plugin! I'd be thrilled if you could share your experiences on Twitter, Reddit, or your preferred social media platform!
 
 You can find me on Instagram [@jakobosterberger](https://instagram.com/@jakobosterberger) or on my website [jakobosterberger.com](https://jakobosterberger.com).
 

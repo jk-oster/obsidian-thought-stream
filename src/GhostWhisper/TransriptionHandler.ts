@@ -1,5 +1,5 @@
 import axios from "axios";
-import ThoughtStream from "main";
+import WhisperBuddy from "main";
 import { Notice, MarkdownView } from "obsidian";
 import { getBaseFileName } from "../utils";
 import {Observable} from "../Observable";
@@ -7,9 +7,9 @@ import {TranscriptionResult} from "./GhostWhisper";
 
 
 export class TranscriptionHandler {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		this.plugin = plugin;
 
 		this.plugin.audioHandler.$transcription.subscribe(async (result: TranscriptionResult) => {

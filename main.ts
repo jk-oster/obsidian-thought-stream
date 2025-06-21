@@ -1,10 +1,10 @@
 import {Plugin, WorkspaceLeaf} from "obsidian";
 import { Timer } from "src/GhostWhisper/Timer";
 import {RecorderModal} from "src/GhostWhisper/RecorderModal";
-import {ThoughtStreamView, VIEW_TYPE_THOUGHT_STREAM_CONTROLS} from "src/ThoughtStreamView";
+import {GhostReaderView, VIEW_TYPE_GHOST_READER} from "src/GhostReader/GhostReaderView";
 import { GhostWhisper } from "src/GhostWhisper/GhostWhisper";
 import { SettingsTab } from "src/Settings/SettingsTab";
-import { SettingsManager, ThoughtStreamSettings } from "src/Settings/SettingsManager";
+import { SettingsManager, WhisperBuddySettings } from "src/Settings/SettingsManager";
 import { NativeAudioRecorder } from "src/GhostWhisper/AudioRecorder";
 import { RecordingStatus, StatusBar } from "src/StatusBar";
 import {Notifiable} from "./src/Observable";
@@ -15,8 +15,8 @@ import {GhostWriter} from "./src/GhostWriter/GhostWriter";
 import {GhostWriterModal} from "./src/GhostWriter/GhostWriterModal";
 import {Controller} from "./src/GhostWhisper/Controller";
 import {CreatePresetModal} from "./src/GhostWriter/CreatePresetModal";
-export default class ThoughtStream extends Plugin {
-	settings: ThoughtStreamSettings;
+export default class WhisperBuddy extends Plugin {
+	settings: WhisperBuddySettings;
 	settingsManager: SettingsManager;
 	aiClient: AiClient;
 	ghostReader: GhostReader;
@@ -50,10 +50,10 @@ export default class ThoughtStream extends Plugin {
 		});
 
 		this.registerView(
-			VIEW_TYPE_THOUGHT_STREAM_CONTROLS,
-			(leaf) => new ThoughtStreamView(leaf, this)
+			VIEW_TYPE_GHOST_READER,
+			(leaf) => new GhostReaderView(leaf, this)
 		);
-		this.addRibbonIcon("ghost", "Open Thought Stream Ghosts View", (evt) => {
+		this.addRibbonIcon("ghost", "Open Ghost-Reader View", (evt) => {
 			this.activateControlsView().then(() => console.log('activated'));
 		});
 
@@ -202,7 +202,7 @@ export default class ThoughtStream extends Plugin {
 		});
 		this.addCommand({
 			id: "open-ghost-reader-view",
-			name: "Open Thought Stream Ghosts view",
+			name: "Open Whisper Buddy Ghosts view",
 			callback: () => {
 				new CreatePresetModal(this).open();
 			},
@@ -213,7 +213,7 @@ export default class ThoughtStream extends Plugin {
 		const { workspace } = this.app;
 
 		let leaf: WorkspaceLeaf | null = null;
-		const leaves = workspace.getLeavesOfType(VIEW_TYPE_THOUGHT_STREAM_CONTROLS);
+		const leaves = workspace.getLeavesOfType(VIEW_TYPE_GHOST_READER);
 		if (leaves.length > 0) {
 			// A leaf with our view already exists, use that
 			leaf = leaves[0];
@@ -221,7 +221,7 @@ export default class ThoughtStream extends Plugin {
 			// Our view could not be found in the workspace, create a new leaf
 			// in the right sidebar for it
 			leaf = workspace.getRightLeaf(false);
-			await leaf?.setViewState({ type: VIEW_TYPE_THOUGHT_STREAM_CONTROLS, active: true });
+			await leaf?.setViewState({ type: VIEW_TYPE_GHOST_READER, active: true });
 		}
 
 		if (this.settings.debugMode) {

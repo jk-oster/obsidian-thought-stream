@@ -1,7 +1,7 @@
 // Credits go to Nik Danilov's Whisper Plugin: https://github.com/nikdanilov/whisper-obsidian-plugin
 
 import axios from "axios";
-import ThoughtStream from "main";
+import WhisperBuddy from "main";
 import { Notice, MarkdownView } from "obsidian";
 import {getBaseFileName, getFrontMatterByFile, parsePromptTemplate} from "../utils";
 import {Observable} from "../Observable";
@@ -13,7 +13,7 @@ export type TranscriptionResult = {
 };
 
 export class GhostWhisper {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 
 	public readonly $state: Observable<AudioHandlerState> = new Observable<AudioHandlerState>('idle');
 	public readonly $transcription: Observable<TranscriptionResult> = new Observable<TranscriptionResult>({
@@ -22,7 +22,7 @@ export class GhostWhisper {
 	});
 	public readonly $error: Observable<string|null> = new Observable<string|null>('');
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		this.plugin = plugin;
 	}
 

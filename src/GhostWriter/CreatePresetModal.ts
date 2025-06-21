@@ -1,14 +1,14 @@
 import {App, ButtonComponent, Modal, PopoverSuggest, Scope, Setting, SuggestModal, TFile} from "obsidian";
-import ThoughtStream from "../../main";
+import WhisperBuddy from "../../main";
 import {Creativity, CreativityOptions, GhostWriterPreset} from "./GhostWriter";
 
 export class CreatePresetModal extends Modal  {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 
-	constructor(plugin: ThoughtStream, config: Partial<GhostWriterPreset> = {}) {
+	constructor(plugin: WhisperBuddy, config: Partial<GhostWriterPreset> = {}) {
 		super(plugin.app);
 		this.plugin = plugin;
-		this.containerEl.addClass("create-content-modal", "thought-stream-modal");
+		this.containerEl.addClass("create-content-modal", "whisper-buddy-modal");
 
 		this.contentEl.createEl("h2", { text: "Ghost Writer" });
 		const configContainer = this.contentEl.createEl('div', {cls: 'preset-config-container'});

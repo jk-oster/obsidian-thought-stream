@@ -1,4 +1,4 @@
-import ThoughtStream from "main";
+import WhisperBuddy from "main";
 import {BaseComponent, ButtonComponent, Component, ItemView, Modal, WorkspaceLeaf} from "obsidian";
 import { RecordingStatus } from "../StatusBar";
 import {RecorderState} from "./AudioRecorder";
@@ -10,7 +10,7 @@ export interface Controls {
 }
 
 export class RecorderModal extends Modal {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 	private startButton: ButtonComponent;
 	private pauseButton: ButtonComponent;
 	private stopButton: ButtonComponent;
@@ -18,7 +18,7 @@ export class RecorderModal extends Modal {
 	private subscriptions = new Set<() => void>();
 	private headlineEl: HTMLElement | null = null;
 
-	constructor(plugin: ThoughtStream, heading?: string) {
+	constructor(plugin: WhisperBuddy, heading?: string) {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.containerEl.addClass("recording-controls");

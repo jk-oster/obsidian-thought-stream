@@ -1,4 +1,4 @@
-import ThoughtStream from "main";
+import WhisperBuddy from "main";
 import { App, PluginSettingTab, Setting, TFolder } from "obsidian";
 import { SettingsManager } from "./SettingsManager";
 import {Notifiable} from "../Observable";
@@ -6,12 +6,12 @@ import {openURL} from "../utils";
 import {FolderSuggest} from "./Suggest/FolderSuggest";
 
 export class SettingsTab extends PluginSettingTab {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 	private settingsManager: SettingsManager;
 	private createNewFileInput: Setting;
 	private saveAudioFileInput: Setting;
 
-	constructor(app: App, plugin: ThoughtStream) {
+	constructor(app: App, plugin: WhisperBuddy) {
 		super(app, plugin);
 		this.plugin = plugin;
 		this.settingsManager = plugin.settingsManager;
@@ -21,7 +21,7 @@ export class SettingsTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
-		this.createHeader('Thought Stream Settings', 'h1');
+		this.createHeader('Whisper Buddy Settings', 'h1');
 		this.createQuickAccess();
 
 		this.createHeader('Ghost Whisper');
@@ -78,18 +78,21 @@ export class SettingsTab extends PluginSettingTab {
 			.addButton(cb => {
 				cb.setCta();
 				cb.setButtonText('Docs');
+				cb.setClass('whisper-buddy-btn');
 				cb.onClick(() => {
 					openURL('https://jk-oster.github.io/obsidian-thought-stream/');
 				});
 			})
 			.addButton(cb => {
 				cb.setButtonText('Open FAQ');
+				cb.setClass('whisper-buddy-btn');
 				cb.onClick(() => {
 					openURL('https://jk-oster.github.io/obsidian-thought-stream/faq.html');
 				});
 			})
 			.addButton(cb => {
 				cb.setButtonText('Report issue');
+				cb.setClass('whisper-buddy-btn');
 				cb.onClick(() => {
 					openURL('https://github.com/jk-oster/obsidian-thought-stream/issues');
 				});
@@ -98,6 +101,7 @@ export class SettingsTab extends PluginSettingTab {
 				cb.setButtonText('Open Ghost-Reader');
 				cb.setTooltip('Open Ghost-Reader View');
 				cb.setIcon('ghost');
+				cb.setClass('whisper-buddy-btn');
 				cb.onClick(() => {
 					this.plugin.activateControlsView();
 				});

@@ -1,4 +1,4 @@
-import ThoughtStream from "../../main";
+import WhisperBuddy from "../../main";
 import {Observable} from "../Observable";
 import OpenAI from "openai";
 import {zodResponseFormat, zodTextFormat} from "openai/helpers/zod";
@@ -68,13 +68,13 @@ type Doc = z.infer<typeof DocumentObject> & {
 };
 
 export class GhostWriter {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 
 	private $state = new Observable<GhostWriterState>('idle');
 	private $error = new Observable<string | null>(null);
 	private $documentResult = new Observable<Doc|null>(null);
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		this.plugin = plugin;
 	}
 

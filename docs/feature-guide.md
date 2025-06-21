@@ -1,6 +1,6 @@
 ---
 title: Feature Guide
-description: Learn everything about Obsidian Thought Stream and how to use all its powerful features.
+description: Learn everything about Obsidian Whisper Buddy and how to use all its powerful features.
 
 editLink: true
 lastUpdated: true

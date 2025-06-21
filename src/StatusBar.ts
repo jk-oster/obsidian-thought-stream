@@ -2,7 +2,7 @@
 
 
 import {Observable} from "./Observable";
-import ThoughtStream from "../main";
+import WhisperBuddy from "../main";
 import {setIcon} from "obsidian";
 import {RecorderState} from "./GhostWhisper/AudioRecorder";
 
@@ -15,19 +15,19 @@ export enum RecordingStatus {
 export type StatusBarState = RecorderState | 'processing';
 
 export class StatusBar {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 	private readonly statusBarIcon: HTMLElement | null = null;
 	private statusBarPauseIcon: HTMLElement | null = null;
 	private readonly statusBarItem: HTMLElement | null = null;
 	private readonly subscriptions = new Set<() => void>();
 	public readonly $state: Observable<StatusBarState> = new Observable<StatusBarState>('inactive');
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		this.plugin = plugin;
 		this.statusBarItem = this.plugin.addStatusBarItem();
 
 		this.statusBarIcon = this.plugin.addStatusBarItem();
-		this.statusBarIcon.addClass('thought-stream-status-bar-icon');
+		this.statusBarIcon.addClass('whisper-buddy-status-bar-icon');
 		this.statusBarIcon.onClickEvent(async () => {
 			await this.plugin.controller.toggleRecording();
 		});
@@ -57,28 +57,28 @@ export class StatusBar {
 		if (this.statusBarItem && this.statusBarIcon) {
 			switch (status) {
 				case 'recording':
-					this.statusBarItem.textContent = "GhostWhisper recording...";
+					this.statusBarItem.textContent = "Whisper Buddy recording...";
 					this.statusBarIcon.style.color = "red";
 					setIcon(this.statusBarIcon, "square");
 					this.updatePauseIcon();
 					break;
 				case 'processing':
-					this.statusBarItem.textContent = "GhostWhisper processing audio...";
+					this.statusBarItem.textContent = "Whisper Buddy processing audio...";
 					this.statusBarIcon.style.color = "orange";
-					this.statusBarIcon.addClass('thought-stream-status-bar-icon');
+					this.statusBarIcon.addClass('whisper-buddy-status-bar-icon');
 					setIcon(this.statusBarIcon, "sync");
 					break;
 				case 'paused':
-					this.statusBarItem.textContent = "GhostWhisper paused";
+					this.statusBarItem.textContent = "Whisper Buddy paused";
 					this.statusBarIcon.style.color = "green";
-					this.statusBarIcon.addClass('thought-stream-status-bar-icon');
+					this.statusBarIcon.addClass('whisper-buddy-status-bar-icon');
 					setIcon(this.statusBarIcon, "play");
 					break;
 				case 'inactive':
 				default:
-					this.statusBarItem.textContent = "GhostWhisper idle";
+					this.statusBarItem.textContent = "Whisper Buddy idle";
 					this.statusBarIcon.style.color = "green";
-					this.statusBarIcon.addClass('thought-stream-status-bar-icon');
+					this.statusBarIcon.addClass('whisper-buddy-status-bar-icon');
 					setIcon(this.statusBarIcon, "mic");
 					break;
 			}
@@ -91,7 +91,7 @@ export class StatusBar {
 
 		if (state === 'recording') {
 			this.statusBarPauseIcon = this.plugin.addStatusBarItem();
-			this.statusBarPauseIcon.addClass('thought-stream-status-bar-icon');
+			this.statusBarPauseIcon.addClass('whisper-buddy-status-bar-icon');
 			this.statusBarPauseIcon.style.color = "orange";
 			setIcon(this.statusBarPauseIcon, "pause");
 			this.statusBarPauseIcon.onClickEvent(async () => {

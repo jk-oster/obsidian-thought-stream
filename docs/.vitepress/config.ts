@@ -2,7 +2,7 @@ import { defineConfig, HeadConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Thought Stream",
+  title: "Whisper Buddy",
   description: "A plugin for Obsidian to explore your ideas, express your thoughts and create useful content effortlessly.",
   lastUpdated: true,
 
@@ -43,7 +43,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Feature Guide', link: '/feature-guide' },
-      { text: 'Install', link: 'obsidian://show-plugin?id=thought-stream' },
+      { text: 'Install', link: 'obsidian://show-plugin?id=whisper-buddy' },
       { text: 'Creator', link: 'https://www.jakobosterberger.com' }
     ],
 

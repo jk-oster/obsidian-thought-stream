@@ -1,5 +1,5 @@
 ---
-title: Why using Thought Stream for Obsidian?
+title: Why using Whisper Buddy for Obsidian?
 description: 
 ---
 

@@ -1,10 +1,10 @@
 import {RecordingStatus} from "../StatusBar";
-import ThoughtStream from "../../main";
+import WhisperBuddy from "../../main";
 
 export class Controller {
-	private readonly plugin: ThoughtStream;
+	private readonly plugin: WhisperBuddy;
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		this.plugin = plugin;
 	}
 

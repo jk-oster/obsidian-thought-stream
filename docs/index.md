@@ -2,20 +2,20 @@
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
-title: Thought Stream for Obsidian
-description: Your personal Ghost-Reader for exploring ideas, Ghost-Writer for creating content and Ghost-Whisper for conveniently transcribing your voice.
+title: Whisper Buddy for Obsidian
+description: Conveniently transcribe your voice with Ghost-Whisper speech-to-text, use our personal Ghost-Reader for exploring ideas and a configurable Ghost-Writer for creating content.
 
 hero:
-  name: "Thought Stream"
+  name: "Whisper Buddy"
 #  text: "Explore Express Transcribe Create"
-  tagline: "Explore your ideas, express your thoughts, and create useful content effortlessly."
+  tagline: "Express your thoughts, explore your ideas, and create useful content effortlessly."
   image:
     src: "/ghost-reader-logo.png"
     alt: "VitePress"
   actions:
     - theme: brand
       text: Install now
-      link: obsidian://show-plugin?id=thought-stream
+      link: obsidian://show-plugin?id=whisper-buddy
     - theme: alt
       text: Getting Started
       link: /getting-started

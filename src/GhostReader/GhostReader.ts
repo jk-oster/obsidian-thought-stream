@@ -1,4 +1,4 @@
-import ThoughtStream from "../../main";
+import WhisperBuddy from "../../main";
 import {Observable} from "../Observable";
 import {zodResponseFormat} from "openai/helpers/zod";
 import {z} from "zod";
@@ -25,14 +25,14 @@ const QuestionsObject = z.object({
 })
 
 export class GhostReader {
-	private readonly plugin: ThoughtStream;
+	private readonly plugin: WhisperBuddy;
 
 	public readonly $state = new Observable<GhostReaderState>('idle');
 	public readonly $error = new Observable<string | null>(null);
 	public readonly $questions = new Observable<string[]>([]);
 	private readonly $headings = new Observable<string[]>([]);
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		this.plugin = plugin;
 	}
 

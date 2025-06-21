@@ -1,12 +1,12 @@
-import ThoughtStream from "../main";
+import WhisperBuddy from "../main";
 import OpenAI from "openai";
 
 
 export class AiClient {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 	public readonly  client: OpenAI;
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		this.plugin = plugin;
 
 		this.client = this.createClient();

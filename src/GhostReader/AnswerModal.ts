@@ -1,17 +1,17 @@
 import {App, ButtonComponent, Modal, PopoverSuggest, Scope, Setting, SuggestModal, TFile} from "obsidian";
-import ThoughtStream from "../../main";
+import WhisperBuddy from "../../main";
 import {Creativity, CreativityOptions, GhostWriterPreset} from "../GhostWriter/GhostWriter";
 
 export class AnswerModal extends Modal  {
-	private plugin: ThoughtStream;
+	private plugin: WhisperBuddy;
 	private answer: string = '';
 	private question: string = '';
 	private readonly questionEl: HTMLElement | null = null;
 
-	constructor(plugin: ThoughtStream) {
+	constructor(plugin: WhisperBuddy) {
 		super(plugin.app);
 		this.plugin = plugin;
-		this.containerEl.addClass("answer-modal", "thought-stream-modal");
+		this.containerEl.addClass("answer-modal", "whisper-buddy-modal");
 
 		this.questionEl = this.contentEl.createEl("h3", { text: this.question });
 
